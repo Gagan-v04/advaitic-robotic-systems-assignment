@@ -82,10 +82,11 @@ All scenarios were evaluated using the authoritative `systems-check` and `cell-e
 
 Detailed engineering design documentation and editable vector diagrams are maintained in [`solution/`](solution/):
 
-- 📘 **[High-Level Design (HLD.md)](solution/HLD.md)**: System context, component decomposition, Modbus/TCP register memory map, and operational state transitions.
-- 📐 **[Low-Level Design (LLD.md)](solution/LLD.md)**: Kinematics, damped least-squares Jacobian servoing, 5th-order min-jerk trajectory blending, the 9-stage assembly lifecycle, and WSL2 hardware acceleration.
-- ⚠️ **[Constraints & Edge-Cases (CONSTRAINTS.md)](solution/CONSTRAINTS.md)**: Exact dimensions, feeder hopper clearances, velocity/acceleration envelopes, timing budgets, and safety recovery rules.
-- 🎨 **[Draw.io Source Diagrams](solution/diagrams/)**: Editable XML diagrams (`.drawio`) and standalone rendered vector graphics (`.svg`):
+- **[High-Level Design (HLD.md)](solution/HLD.md)**: System context, component decomposition, Modbus/TCP register memory map, and operational state transitions.
+- **[Low-Level Design (LLD.md)](solution/LLD.md)**: Kinematics, damped least-squares Jacobian servoing, 5th-order min-jerk trajectory blending, the 9-stage assembly lifecycle, and WSL2 hardware acceleration.
+- **[Constraints & Edge-Cases (CONSTRAINTS.md)](solution/CONSTRAINTS.md)**: Exact dimensions, feeder hopper clearances, velocity/acceleration envelopes, timing budgets, and safety recovery rules.
+- **[Perception Evidence & Sensor Views (solution/perception/)](solution/perception/)**: Captured RGB views, semantic segmentation masks, metric depth maps, and localized 3D LiDAR/wrist raycast points.
+- **[Draw.io Source Diagrams](solution/diagrams/)**: Editable XML diagrams (`.drawio`) and standalone rendered vector graphics (`.svg`):
   - [System Architecture](solution/diagrams/system_architecture.svg) (`system_architecture.drawio`)
   - [State Machine](solution/diagrams/state_machine.svg) (`state_machine.drawio`)
   - [Pick & Place Pipeline](solution/diagrams/pick_and_place_pipeline.svg) (`pick_and_place_pipeline.drawio`)
@@ -97,7 +98,7 @@ Detailed engineering design documentation and editable vector diagrams are maint
 
 Per submission requirements, all verified simulation run data, logs, and evidence traces are consolidated into a single clean directory:
 
-📁 **[`results/nominal-seed-0/`](results/nominal-seed-0/)**
+**[`results/nominal-seed-0/`](results/nominal-seed-0/)**
 - `events.jsonl` — Full event log validated by `systems-check` and `cell-eval`
 - `summary.json` — Machine-readable scorecard (`passed: true`, `accepted: {1: 5, 2: 5}`, `violations: []`)
 - `trace.json` — Real-time telemetry, joint positions, velocities, and tracking errors

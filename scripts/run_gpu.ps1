@@ -11,7 +11,7 @@ $drive = $winRoot.Substring(0, 1).ToLower()
 $rest = $winRoot.Substring(2).Replace("\", "/")
 $wslRoot = "/mnt/$drive$rest"
 $script = "$wslRoot/scripts/run_gpu.sh"
-& wsl -d Ubuntu-24.04 -u root -- sed -i "s/\r$//" $script "$wslRoot/scripts/probe_gpu_render.py"
+& wsl -d Ubuntu-24.04 -u root -- sed -i "s/\r$//" $script
 if ($args -and $args.Count -gt 0) {
     & wsl -d Ubuntu-24.04 -u root -- bash $script @args
 } else {

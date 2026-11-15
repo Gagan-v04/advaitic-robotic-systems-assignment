@@ -1,0 +1,1131 @@
+{
+  "amr_pose": {
+    "x": -0.004,
+    "y": -0.005,
+    "yaw_rad": 0.01
+  },
+  "lidar_rays_64": [
+    {
+      "angle_deg": -180.0,
+      "distance_m": 0.096,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.006,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -174.4,
+      "distance_m": 0.096,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.015,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -168.8,
+      "distance_m": 0.098,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.025,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -163.1,
+      "distance_m": 0.1,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.035,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -157.5,
+      "distance_m": 0.104,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.045,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -151.9,
+      "distance_m": 0.109,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.057,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -146.2,
+      "distance_m": 0.116,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.07,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -140.6,
+      "distance_m": 0.125,
+      "geom_id": 5,
+      "hit_point": [
+        -0.1,
+        -0.085,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -135.0,
+      "distance_m": 0.133,
+      "geom_id": 5,
+      "hit_point": [
+        -0.098,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -129.4,
+      "distance_m": 0.122,
+      "geom_id": 5,
+      "hit_point": [
+        -0.081,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -123.7,
+      "distance_m": 0.114,
+      "geom_id": 5,
+      "hit_point": [
+        -0.067,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -118.1,
+      "distance_m": 0.107,
+      "geom_id": 5,
+      "hit_point": [
+        -0.054,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -112.5,
+      "distance_m": 0.103,
+      "geom_id": 5,
+      "hit_point": [
+        -0.043,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -106.9,
+      "distance_m": 0.099,
+      "geom_id": 5,
+      "hit_point": [
+        -0.032,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -101.2,
+      "distance_m": 0.097,
+      "geom_id": 5,
+      "hit_point": [
+        -0.022,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -95.6,
+      "distance_m": 0.096,
+      "geom_id": 5,
+      "hit_point": [
+        -0.013,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -90.0,
+      "distance_m": 0.095,
+      "geom_id": 5,
+      "hit_point": [
+        -0.003,
+        -0.1,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -84.4,
+      "distance_m": 0.039,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.044,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -78.8,
+      "distance_m": 0.021,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.025,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -73.1,
+      "distance_m": 0.014,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.018,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -67.5,
+      "distance_m": 0.011,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.015,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -61.9,
+      "distance_m": 0.009,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.012,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -56.3,
+      "distance_m": 0.008,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.011,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -50.6,
+      "distance_m": 0.007,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.01,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -45.0,
+      "distance_m": 0.006,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.009,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -39.4,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.008,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -33.7,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.008,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -28.1,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.007,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -22.5,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.006,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -16.9,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.006,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -11.3,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.006,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": -5.6,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.005,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 0.0,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.005,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 5.6,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.004,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 11.3,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.004,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 16.9,
+      "distance_m": 0.004,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.003,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 22.5,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.003,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 28.1,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.002,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 33.7,
+      "distance_m": 0.005,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.002,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 39.4,
+      "distance_m": 0.006,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.001,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 45.0,
+      "distance_m": 0.006,
+      "geom_id": 5,
+      "hit_point": [
+        -0.0,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 50.6,
+      "distance_m": 0.006,
+      "geom_id": 3,
+      "hit_point": [
+        -0.0,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 56.3,
+      "distance_m": 0.006,
+      "geom_id": 3,
+      "hit_point": [
+        -0.001,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 61.9,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.002,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 67.5,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.002,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 73.1,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.003,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 78.7,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.003,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 84.4,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.004,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 90.0,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.004,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 95.6,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.005,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 101.3,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.005,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 106.9,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.006,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 112.5,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.006,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 118.1,
+      "distance_m": 0.005,
+      "geom_id": 3,
+      "hit_point": [
+        -0.007,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 123.7,
+      "distance_m": 0.006,
+      "geom_id": 3,
+      "hit_point": [
+        -0.007,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 129.4,
+      "distance_m": 0.006,
+      "geom_id": 3,
+      "hit_point": [
+        -0.008,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 135.0,
+      "distance_m": 0.007,
+      "geom_id": 3,
+      "hit_point": [
+        -0.009,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 140.6,
+      "distance_m": 0.008,
+      "geom_id": 3,
+      "hit_point": [
+        -0.01,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 146.2,
+      "distance_m": 0.009,
+      "geom_id": 3,
+      "hit_point": [
+        -0.011,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 151.9,
+      "distance_m": 0.01,
+      "geom_id": 3,
+      "hit_point": [
+        -0.013,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 157.5,
+      "distance_m": 0.013,
+      "geom_id": 3,
+      "hit_point": [
+        -0.016,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 163.1,
+      "distance_m": 0.017,
+      "geom_id": 3,
+      "hit_point": [
+        -0.02,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 168.8,
+      "distance_m": 0.026,
+      "geom_id": 3,
+      "hit_point": [
+        -0.029,
+        -0.0,
+        0.6
+      ]
+    },
+    {
+      "angle_deg": 174.4,
+      "distance_m": 0.054,
+      "geom_id": 3,
+      "hit_point": [
+        -0.058,
+        -0.0,
+        0.6
+      ]
+    }
+  ],
+  "wrist_depth_grid_5x5": [
+    {
+      "origin": [
+        -4.1,
+        -2.985,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.1,
+        -2.985,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.1,
+        -2.97,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.1,
+        -2.97,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.1,
+        -2.955,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.1,
+        -2.955,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.1,
+        -2.94,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.1,
+        -2.94,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.1,
+        -2.925,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.1,
+        -2.925,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.085,
+        -2.985,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.085,
+        -2.985,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.085,
+        -2.97,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.085,
+        -2.97,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.085,
+        -2.955,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.085,
+        -2.955,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.085,
+        -2.94,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.085,
+        -2.94,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.085,
+        -2.925,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.085,
+        -2.925,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.07,
+        -2.985,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.07,
+        -2.985,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.07,
+        -2.97,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.07,
+        -2.97,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.07,
+        -2.955,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.07,
+        -2.955,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.07,
+        -2.94,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.07,
+        -2.94,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.07,
+        -2.925,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.07,
+        -2.925,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.055,
+        -2.985,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.055,
+        -2.985,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.055,
+        -2.97,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.055,
+        -2.97,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.055,
+        -2.955,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.055,
+        -2.955,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.055,
+        -2.94,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.055,
+        -2.94,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.055,
+        -2.925,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.055,
+        -2.925,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.04,
+        -2.985,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.04,
+        -2.985,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.04,
+        -2.97,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.04,
+        -2.97,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.04,
+        -2.955,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.04,
+        -2.955,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.04,
+        -2.94,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.04,
+        -2.94,
+        0.0
+      ]
+    },
+    {
+      "origin": [
+        -4.04,
+        -2.925,
+        0.905
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "distance_m": 0.905,
+      "geom_id": 0,
+      "hit_point": [
+        -4.04,
+        -2.925,
+        0.0
+      ]
+    }
+  ],
+  "localized_bottle_centroid": [
+    -4.07,
+    -2.955,
+    0.0
+  ]
+}
