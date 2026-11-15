@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 430" width="100%" height="100%">
+  <defs>
+    <style>
+      .box-plant { fill: #f0f7ff; stroke: #3182ce; stroke-width: 2px; }
+      .box-robot { fill: #fffaf0; stroke: #dd6b20; stroke-width: 2px; }
+      .box-hw { fill: #faf5ff; stroke: #805ad5; stroke-width: 2px; }
+      .card { fill: #ffffff; stroke: #cbd5e0; stroke-width: 1.5px; rx: 6px; }
+      .card-accent { fill: #f0fff4; stroke: #38a169; stroke-width: 1.5px; rx: 6px; }
+      .card-red { fill: #fff5f5; stroke: #e53e3e; stroke-width: 1.5px; rx: 6px; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 700; font-size: 15px; fill: #2d3748; }
+      .label-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; font-size: 13px; fill: #1a202c; }
+      .label-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 400; font-size: 11px; fill: #4a5568; }
+      .arrow { stroke: #4a5568; stroke-width: 2px; marker-end: url(#arrowhead); fill: none; }
+      .arrow-green { stroke: #38a169; stroke-width: 2.5px; marker-end: url(#arrowhead-green); fill: none; }
+      .arrow-orange { stroke: #dd6b20; stroke-width: 2.5px; marker-end: url(#arrowhead-orange); fill: none; }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a5568" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38a169" />
+    </marker>
+    <marker id="arrowhead-orange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#dd6b20" />
+    </marker>
+  </defs>
+
+  <!-- Container 1: Physical Plant -->
+  <rect x="20" y="20" width="340" height="390" rx="10" class="box-plant" />
+  <text x="40" y="50" class="title">1. Physical Plant &amp; Digital Twin</text>
+
+  <rect x="40" y="70" width="300" height="50" class="card" />
+  <text x="55" y="92" class="label-title">Conveyor A &amp; B (Belts)</text>
+  <text x="55" y="108" class="label-sub">v = 30-35 mm/s, pitch = 450 mm, Z = 0.75m</text>
+
+  <rect x="40" y="130" width="300" height="50" class="card" />
+  <text x="55" y="152" class="label-title">Kit Feeder (Station A &amp; B)</text>
+  <text x="55" y="168" class="label-sub">Spawns moving kit (Bottle + Ring), arrival X=-0.3m</text>
+
+  <rect x="40" y="190" width="300" height="60" class="card" />
+  <text x="55" y="212" class="label-title">Downstream Inspection Gate</text>
+  <text x="55" y="228" class="label-sub">Radial &lt;= 4mm, Z in [130, 136]mm, Tilt &lt;= 10 deg</text>
+  <text x="55" y="242" class="label-sub">Continuous settled hold &gt;= 0.50s</text>
+
+  <rect x="40" y="260" width="300" height="65" class="card-accent" />
+  <text x="55" y="282" class="label-title">Modbus/TCP Line Controller (Port 1502)</text>
+  <text x="55" y="298" class="label-sub">FC03 Read ACCEPTED / FC16 Write READY &amp; DONE</text>
+  <text x="55" y="312" class="label-sub">Idempotent sequence transactions</text>
+
+  <rect x="40" y="335" width="300" height="55" class="card-red" />
+  <text x="55" y="356" class="label-title">Human Intruder Zone</text>
+  <text x="55" y="373" class="label-sub">Scripted worker walking aisle (duration 2-4s)</text>
+
+  <!-- Container 2: Autonomous Mobile Robot -->
+  <rect x="410" y="20" width="370" height="390" rx="10" class="box-robot" />
+  <text x="430" y="50" class="title">2. Mobile Manipulator Solution</text>
+
+  <rect x="430" y="70" width="330" height="50" class="card" />
+  <text x="445" y="92" class="label-title">Mission Executive &amp; State Machine</text>
+  <text x="445" y="108" class="label-sub">Sequential station targets, dock logic, kit lifecycle</text>
+
+  <rect x="430" y="130" width="330" height="50" class="card" />
+  <text x="445" y="152" class="label-title">Differential Drive AMR Tracker</text>
+  <text x="445" y="168" class="label-sub">Dock pose tracking within 25mm / 2 deg tolerance</text>
+
+  <rect x="430" y="190" width="330" height="55" class="card" />
+  <text x="445" y="212" class="label-title">6-DOF Manipulator &amp; Cartesian Servo</text>
+  <text x="445" y="228" class="label-sub">Min-jerk chord blending, conveyor speed feedforward</text>
+  <text x="445" y="242" class="label-sub">Inverse kinematics with joint range bounds</text>
+
+  <rect x="430" y="255" width="330" height="65" class="card-accent" />
+  <text x="445" y="277" class="label-title">Parallel Gripper &amp; Equality Weld Manager</text>
+  <text x="445" y="293" class="label-sub">Equality constraint frozen at grasp; zero snap</text>
+  <text x="445" y="307" class="label-sub">Release only with finger gap &gt; 90mm (no cocking)</text>
+
+  <rect x="430" y="330" width="330" height="60" class="card-red" />
+  <text x="445" y="352" class="label-title">Safety Lidar (64 Rays) &amp; Estimator</text>
+  <text x="445" y="368" class="label-sub">Aisle intrusion monitor, depth correction, arm freeze</text>
+
+  <!-- Container 3: Hardware & Sim Runtime -->
+  <rect x="830" y="20" width="330" height="390" rx="10" class="box-hw" />
+  <text x="850" y="50" class="title">3. Accelerated Runtime &amp; Evaluation</text>
+
+  <rect x="850" y="70" width="290" height="65" class="card" />
+  <text x="865" y="92" class="label-title">MuJoCo 3.8.1 Physics Core</text>
+  <text x="865" y="108" class="label-sub">Newton solver, dt = 4ms (250 Hz step)</text>
+  <text x="865" y="122" class="label-sub">Zero belt penetration / contact check</text>
+
+  <rect x="850" y="145" width="290" height="65" class="card-accent" />
+  <text x="865" y="167" class="label-title">OSMesa AVX2 CPU SIMD Renderer</text>
+  <text x="865" y="183" class="label-sub">LLVMpipe in-memory rasterization</text>
+  <text x="865" y="197" class="label-sub">43 ms/frame (25x faster than WSL2 D3D12)</text>
+
+  <rect x="850" y="220" width="290" height="70" class="card-accent" />
+  <text x="865" y="242" class="label-title">NVIDIA RTX 5050 NVENC Video Engine</text>
+  <text x="865" y="258" class="label-sub">h264_nvenc hardware offload, zero CPU load</text>
+  <text x="865" y="272" class="label-sub">Native 1080p @ 30 fps in ~4.8 minutes</text>
+
+  <rect x="850" y="300" width="290" height="90" class="card" />
+  <text x="865" y="322" class="label-title">Evidence &amp; Verification Bridge</text>
+  <text x="865" y="338" class="label-sub">physics systems-check (Modbus trace audit)</text>
+  <text x="865" y="352" class="label-sub">physics cell-eval (seating, contacts, time)</text>
+  <text x="865" y="366" class="label-sub">Result: 10/10 Accepted, 0 Violations</text>
+
+  <!-- Connectors -->
+  <path d="M 430 95 L 350 280" class="arrow-green" />
+  <path d="M 760 215 L 850 100" class="arrow-orange" />
+  <path d="M 995 210 L 995 220" class="arrow" />
+</svg>

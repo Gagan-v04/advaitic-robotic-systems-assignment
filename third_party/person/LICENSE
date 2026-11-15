@@ -1,0 +1,8 @@
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
+
+This directory contains original low-poly worker meshes authored for the
+Advaitic robotic-systems assignment. They are licensed under Apache-2.0,
+the same licence as the rest of this repository. They are not derived from
+Mixamo, SMPL, Unitree, or any non-redistributable human scan.

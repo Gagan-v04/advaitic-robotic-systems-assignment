@@ -1,0 +1,8 @@
+.venv
+.git
+.pytest_cache
+.ruff_cache
+__pycache__
+results
+*.egg-info
+third_party/mujoco_menagerie/google_robot/cell_scene.xml

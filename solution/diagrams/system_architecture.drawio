@@ -1,0 +1,83 @@
+<mxfile host="app.diagrams.net" modified="2026-11-15T14:10:00.000Z" agent="Antigravity" version="24.7.17">
+  <diagram id="sys_arch_1" name="System Architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="box_plant" value="Physical Plant / Customer Digital Twin" style="swimlane;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="320" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="belt_a" value="Conveyor A (Yaw 0, +X travel)&#xa;v = 30-35 mm/s, Top Z = 0.75m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
+          <mxGeometry x="20" y="40" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="feeder" value="Kit Feeder (Bottle + Rigid Ring)&#xa;Pitch = 450 mm, Arrival X = -300 mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
+          <mxGeometry x="20" y="105" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="inspect" value="Downstream Inspection Gate (X = +550 mm)&#xa;Radial &lt;= 4mm, Z in [130, 136]mm&#xa;Tilt &lt;= 10 deg, Settled Hold &gt;= 0.5s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="box_plant">
+          <mxGeometry x="20" y="170" width="280" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="plc_srv" value="Modbus/TCP Line Controller (Port 1502)&#xa;FC03 Read Accepts / FC16 Write Ready/Done&#xa;Idempotent Sequence Numbers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="box_plant">
+          <mxGeometry x="20" y="250" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="belt_b" value="Conveyor B (Yaw pi, -X travel)&#xa;v = 30-35 mm/s, Top Z = 0.75m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
+          <mxGeometry x="20" y="320" width="280" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_robot" value="Autonomous Mobile Manipulator (Google Robot + AMR)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="420" y="40" width="360" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="state_mach" value="Mission Executive &amp; State Machine&#xa;Station Goals, Dock Sequencing, Fault Supervisor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="box_robot">
+          <mxGeometry x="20" y="40" width="320" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="nav_ctl" value="Navigation &amp; Diff-Drive AMR Controller&#xa;Waypoint tracking, Docking &lt;= 25mm / 2 deg tolerance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="box_robot">
+          <mxGeometry x="20" y="100" width="320" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="arm_ctl" value="6-DOF Arm Kinematics &amp; Cartesian Servo&#xa;Min-jerk chord blending, Velocity feedforward, Nullspace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="box_robot">
+          <mxGeometry x="20" y="160" width="320" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gripper_mgr" value="Parallel Gripper &amp; Equality Weld Manager&#xa;Radial tolerance &lt; 2.2mm, Finger gap clearance &gt; 90mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="box_robot">
+          <mxGeometry x="20" y="225" width="320" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="safety_lidar" value="Perception &amp; Safety Lidar (64 Rays)&#xa;Intrusion bounding boxes, conveyor encoders, depth rays" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="box_robot">
+          <mxGeometry x="20" y="290" width="320" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_hardware" value="High-Performance Accelerated Runtime (WSL2 + NVIDIA RTX 5050)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="840" y="40" width="320" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="sim_engine" value="MuJoCo 3.8.1 Physics Engine&#xa;Newton solver, dt = 4ms (250 Hz lockstep)&#xa;Deterministic contacts &amp; friction models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="box_hardware">
+          <mxGeometry x="20" y="45" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="osmesa_render" value="OSMesa CPU SIMD Vectorized Renderer&#xa;Multi-core AVX2 LLVMpipe, in-memory framebuffers&#xa;43 ms/frame (25x faster than WSL2 D3D12)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="box_hardware">
+          <mxGeometry x="20" y="120" width="280" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="nvenc_gpu" value="NVIDIA RTX 5050 Laptop GPU NVENC&#xa;Hardware H.264 Encoder (h264_nvenc)&#xa;Native 1080p @ 30 fps, 0% CPU encoding overhead" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="box_hardware">
+          <mxGeometry x="20" y="200" width="280" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="eval_bridge" value="Verification &amp; Evidence Checker&#xa;`physics systems-check` &amp; `physics cell-eval`&#xa;100% contract compliance verification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="box_hardware">
+          <mxGeometry x="20" y="280" width="280" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge1" value="Modbus/TCP Client Requests (FC03/FC16)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="state_mach" target="plc_srv">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="102" />
+              <mxPoint x="400" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge2" value="Simulated Joint &amp; Base Actuation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d79b00;" edge="1" parent="1" source="arm_ctl" target="sim_engine">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="225" />
+              <mxPoint x="800" y="115" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge3" value="Raw RGB Frame Stream" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="osmesa_render" target="nvenc_gpu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

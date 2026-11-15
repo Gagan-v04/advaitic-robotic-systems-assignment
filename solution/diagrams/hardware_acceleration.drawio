@@ -1,0 +1,38 @@
+<mxfile host="app.diagrams.net" modified="2026-11-15T14:10:00.000Z" agent="Antigravity" version="24.7.17">
+  <diagram id="hw_acc_1" name="Hardware Acceleration Engine">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="box_slow" value="TRADITIONAL WSL2 PIPELINE (STALL BOTTLENECK)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="520" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s_mujoco" value="MuJoCo Offscreen EGL&#xa;(MUJOCO_GL=egl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="box_slow">
+          <mxGeometry x="20" y="40" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s_mesa" value="Mesa D3D12 Gallium Driver&#xa;(DirectX 12 emulation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="box_slow">
+          <mxGeometry x="20" y="110" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s_dxg" value="/dev/dxg Hyper-V Virtual Barrier&#xa;Synchronous glReadPixels fence stall&#xa;1,108 ms / frame (0.9 fps!)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="box_slow">
+          <mxGeometry x="20" y="180" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s_cpu" value="Software x264 Encoding&#xa;CPU bottleneck&#xa;13.4 Hours per Mission!" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="box_slow">
+          <mxGeometry x="310" y="110" width="190" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_fast" value="OPTIMIZED HIGH-SPEED NVENC PIPELINE (OUR SOLUTION)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="600" y="50" width="540" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="f_osmesa" value="OSMesa CPU SIMD Vectorization&#xa;(MUJOCO_GL=osmesa)&#xa;LLVMpipe AVX2 in-memory rasterization&#xa;43 ms / frame (23.2 fps) — 25x Faster!" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="box_fast">
+          <mxGeometry x="20" y="40" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="f_pipe" value="Direct Memory Stride Mosaic Stitches&#xa;4x (960x540) -&gt; 1920x1080 Full HD&#xa;Zero-copy stdin rawvideo pipe" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" vertex="1" parent="box_fast">
+          <mxGeometry x="20" y="150" width="240" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="f_nvenc" value="NVIDIA GeForce RTX 5050 NVENC&#xa;h264_nvenc -preset p1 -tune ull&#xa;Hardware-accelerated encoding&#xa;Runs in ~4.8 minutes (168x speedup!)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="box_fast">
+          <mxGeometry x="290" y="90" width="230" height="85" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

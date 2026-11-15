@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%">
+  <defs>
+    <style>
+      .box { rx: 8px; ry: 8px; stroke-width: 2px; }
+      .title-box { fill: #1e293b; stroke: #334155; }
+      .state-box { fill: #f8fafc; stroke: #0284c7; }
+      .state-work { fill: #eff6ff; stroke: #2563eb; }
+      .state-safety { fill: #fff1f2; stroke: #e11d48; stroke-dasharray: 4,4; }
+      .state-plc { fill: #fefce8; stroke: #ca8a04; }
+      .state-done { fill: #f0fdf4; stroke: #16a34a; }
+      .title { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 20px; font-weight: bold; fill: #ffffff; }
+      .text-bold { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; font-weight: bold; fill: #0f172a; }
+      .text-sub { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; fill: #475569; }
+      .text-code { font-family: 'Consolas', monospace; font-size: 11px; fill: #0369a1; }
+      .arrow { stroke: #334155; stroke-width: 2px; fill: none; marker-end: url(#arrowhead); }
+      .arrow-safety { stroke: #e11d48; stroke-width: 2px; fill: none; stroke-dasharray: 4,4; marker-end: url(#arrowhead-red); }
+      .arrow-plc { stroke: #ca8a04; stroke-width: 2px; fill: none; marker-end: url(#arrowhead-yellow); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#334155" />
+    </marker>
+    <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e11d48" />
+    </marker>
+    <marker id="arrowhead-yellow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ca8a04" />
+    </marker>
+  </defs>
+
+  <!-- Title Header -->
+  <rect x="20" y="20" width="960" height="50" class="box title-box" />
+  <text x="40" y="52" class="title">Advaitic Cell - Master Operational State Machine &amp; Transition Graph</text>
+
+  <!-- Initial State -->
+  <circle cx="90" cy="150" r="18" fill="#0f172a" />
+  <circle cx="90" cy="150" r="14" fill="#38bdf8" />
+  <text x="50" y="195" class="text-bold">Cell Init</text>
+  <text x="40" y="210" class="text-sub">PLC Handshake</text>
+
+  <!-- Transition: Init to Nav Stn 1 -->
+  <path d="M 115 150 L 195 150" class="arrow" />
+  <text x="125" y="140" class="text-sub">Start Mission</text>
+
+  <!-- State: Nav Stn 1 -->
+  <rect x="200" y="115" width="200" height="70" class="box state-box" />
+  <text x="215" y="142" class="text-bold">1. NAVIGATE STN 1</text>
+  <text x="215" y="162" class="text-sub">Cartesian Servo: Base -&gt; (1.60, 0.45)</text>
+  <text x="215" y="176" class="text-code">Tuck Arm: [0, -1.57, 1.57, -1.57, -1.57, 0]</text>
+
+  <!-- Transition: Nav Stn 1 to Work Stn 1 -->
+  <path d="M 400 150 L 485 150" class="arrow" />
+  <text x="410" y="140" class="text-sub">Arrived at Stn 1</text>
+
+  <!-- State: Work Stn 1 -->
+  <rect x="490" y="100" width="240" height="100" class="box state-work" />
+  <text x="505" y="125" class="text-bold">2. WORK STATION 1</text>
+  <text x="505" y="145" class="text-sub">Assemble Kits 101 - 105 (5 rings)</text>
+  <text x="505" y="163" class="text-sub">Conveyor tracking + min-jerk blend</text>
+  <text x="505" y="181" class="text-code">Modbus: read kits_accepted == 5</text>
+
+  <!-- Self-loop: Next kit at Stn 1 -->
+  <path d="M 680 100 C 680 60, 720 60, 720 100" class="arrow" />
+  <text x="660" y="50" class="text-sub">Kit 1..5 Loop</text>
+
+  <!-- Transition: Work Stn 1 to Nav Stn 2 -->
+  <path d="M 730 150 L 815 150" class="arrow" />
+  <text x="740" y="140" class="text-sub">S1 Complete</text>
+
+  <!-- State: Nav Stn 2 -->
+  <rect x="820" y="115" width="160" height="70" class="box state-box" />
+  <text x="835" y="142" class="text-bold">3. NAVIGATE STN 2</text>
+  <text x="835" y="162" class="text-sub">Base -&gt; (3.20, 0.45)</text>
+  <text x="835" y="176" class="text-code">Tuck Arm Pose</text>
+
+  <!-- Path from Nav Stn 2 to Work Stn 2 (curved down to second row) -->
+  <path d="M 900 185 L 900 270 L 735 270" class="arrow" />
+  <text x="800" y="260" class="text-sub">Arrived at Stn 2</text>
+
+  <!-- State: Work Stn 2 -->
+  <rect x="490" y="220" width="240" height="100" class="box state-work" />
+  <text x="505" y="245" class="text-bold">4. WORK STATION 2</text>
+  <text x="505" y="265" class="text-sub">Assemble Kits 201 - 205 (5 rings)</text>
+  <text x="505" y="283" class="text-sub">Fast tracking &amp; dual-stage seat</text>
+  <text x="505" y="301" class="text-code">Modbus: read kits_accepted == 5</text>
+
+  <!-- Self-loop: Next kit at Stn 2 -->
+  <path d="M 680 320 C 680 360, 720 360, 720 320" class="arrow" />
+  <text x="660" y="375" class="text-sub">Kit 1..5 Loop</text>
+
+  <!-- Transition: Work Stn 2 to Complete -->
+  <path d="M 490 270 L 335 270" class="arrow" />
+  <text x="365" y="260" class="text-sub">S2 Complete</text>
+
+  <!-- Final State: Mission Success -->
+  <rect x="160" y="235" width="170" height="70" class="box state-done" />
+  <text x="175" y="262" class="text-bold" fill="#15803d">5. COMPLETE</text>
+  <text x="175" y="282" class="text-sub">Total Accepted: 10 / 10</text>
+  <text x="175" y="296" class="text-code" fill="#15803d">Violations: 0 | Passed: True</text>
+
+  <!-- Double circle for end state -->
+  <circle cx="80" cy="270" r="18" fill="none" stroke="#16a34a" stroke-width="3" />
+  <circle cx="80" cy="270" r="12" fill="#16a34a" />
+  <path d="M 160 270 L 105 270" class="arrow" />
+
+  <!-- SAFETY SUPERVISOR LAYER (Lower section) -->
+  <rect x="20" y="410" width="960" height="240" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" rx="8" />
+  <text x="40" y="435" class="text-bold" fill="#334155">SAFETY &amp; FAULT HANDLING SUPERVISORY SYSTEM</text>
+
+  <!-- Safety Stop Node -->
+  <rect x="50" y="460" width="380" height="160" class="box state-safety" />
+  <text x="70" y="488" class="text-bold" fill="#be123c">Human Intrusion Safety Stop (Scenario: human-stop)</text>
+  <text x="70" y="512" class="text-sub">- 64-ray radial LiDAR scan: 360 deg, range 1.8m</text>
+  <text x="70" y="530" class="text-sub">- Trigger: point cloud hits human geom &lt; 1.2m</text>
+  <text x="70" y="548" class="text-sub">- Action: Set target_vel = 0, lock arm brakes, halt trajectory clock</text>
+  <text x="70" y="566" class="text-sub">- Clearing: When human dist &gt; 1.5m for 500ms, smooth re-accel</text>
+  <text x="70" y="590" class="text-code" fill="#e11d48">Guarantee: 0 collisions, 0 speed limit violations during pause</text>
+
+  <!-- Connecting dashed lines to Safety Node -->
+  <path d="M 300 185 L 300 455" class="arrow-safety" />
+  <path d="M 610 200 L 610 455" class="arrow-safety" />
+  <path d="M 610 320 L 610 455" class="arrow-safety" />
+
+  <!-- PLC Retry Node -->
+  <rect x="540" y="460" width="410" height="160" class="box state-plc" />
+  <text x="560" y="488" class="text-bold" fill="#a16207">Modbus/PLC Resynchronization (Scenario: plc-retry)</text>
+  <text x="560" y="512" class="text-sub">- Modbus Register 40001: Heartbeat / Watchdog counter</text>
+  <text x="560" y="530" class="text-sub">- Register 40002: Kit Stage Status [IDLE, GRASP, TRANSIT, SEAT]</text>
+  <text x="560" y="548" class="text-sub">- Fault Trigger: CRC error or Station E-stop flag raised</text>
+  <text x="560" y="566" class="text-sub">- Recovery: Retry handshake 3x @ 50ms, hold bottle clamp until ACK</text>
+  <text x="560" y="590" class="text-code" fill="#a16207">Protocol: Strict Modbus/TCP register parity, deterministic cycle</text>
+</svg>

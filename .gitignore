@@ -3,6 +3,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+.pydeps/
 results/
 submission/checkpoints/
 .env
+third_party/mujoco_menagerie/google_robot/cell_scene.xml
+wheelhouse/

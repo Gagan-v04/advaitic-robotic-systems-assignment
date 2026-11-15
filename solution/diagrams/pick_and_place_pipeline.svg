@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .box { rx: 6px; ry: 6px; stroke-width: 1.5px; }
+      .stage-card { fill: #f8fafc; stroke: #3b82f6; }
+      .stage-critical { fill: #f0fdf4; stroke: #16a34a; stroke-width: 2px; }
+      .stage-num { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: bold; fill: #2563eb; }
+      .stage-title { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; font-weight: bold; fill: #0f172a; }
+      .stage-desc { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; fill: #475569; }
+      .stage-metric { font-family: 'Consolas', monospace; font-size: 10px; fill: #0284c7; }
+      .title-box { fill: #0f172a; stroke: #1e293b; }
+      .title { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 18px; font-weight: bold; fill: #ffffff; }
+      .subtitle { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 12px; fill: #94a3b8; }
+      .connector { stroke: #64748b; stroke-width: 2px; fill: none; marker-end: url(#arrow); }
+      .flow-note { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 10px; fill: #64748b; font-style: italic; }
+    </style>
+    <marker id="arrow" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <!-- Header Banner -->
+  <rect x="20" y="20" width="1020" height="55" rx="8" class="title-box" />
+  <text x="40" y="45" class="title">9-Stage High-Precision Pick &amp; Place Assembly Pipeline</text>
+  <text x="40" y="63" class="subtitle">Deterministic Grasping, Min-Jerk Conveyor Tracking, and Dual-Stage Zero-Tilt Seating</text>
+
+  <!-- ROW 1: Stages 1 to 3 -->
+  <!-- Stage 1 -->
+  <rect x="30" y="100" width="300" height="130" class="box stage-card" />
+  <text x="45" y="122" class="stage-num">STAGE 01</text>
+  <text x="45" y="142" class="stage-title">Hover Approach Dispenser</text>
+  <text x="45" y="162" class="stage-desc">Arm moves above ring feeder hopper.</text>
+  <text x="45" y="178" class="stage-desc">Pre-orients wrist perpendicular to ring normal.</text>
+  <text x="45" y="198" class="stage-metric">Target: (x_ring, y_ring, z_feeder + 0.150m)</text>
+  <text x="45" y="214" class="stage-metric">Gripper Jaw Aperture: 0.110m (Fully Open)</text>
+
+  <!-- Flow 1->2 -->
+  <path d="M 330 165 L 380 165" class="connector" />
+
+  <!-- Stage 2 -->
+  <rect x="385" y="100" width="300" height="130" class="box stage-card" />
+  <text x="400" y="122" class="stage-num">STAGE 02</text>
+  <text x="400" y="142" class="stage-title">Vertical Dispenser Descent</text>
+  <text x="400" y="162" class="stage-desc">Controlled descent along z-axis into ring slot.</text>
+  <text x="400" y="178" class="stage-desc">Soft touch avoidance prevents hopper deflection.</text>
+  <text x="400" y="198" class="stage-metric">Z-descent: 0.150m -&gt; 0.000m @ v = 0.08 m/s</text>
+  <text x="400" y="214" class="stage-metric">Finger clearance margin: 15mm per jaw</text>
+
+  <!-- Flow 2->3 -->
+  <path d="M 685 165 L 735 165" class="connector" />
+
+  <!-- Stage 3 -->
+  <rect x="740" y="100" width="300" height="130" class="box stage-critical" />
+  <text x="755" y="122" class="stage-num" fill="#16a34a">STAGE 03 [CRITICAL]</text>
+  <text x="755" y="142" class="stage-title">Grasp Ring &amp; Equality Weld</text>
+  <text x="755" y="162" class="stage-desc">Pinch jaws close onto ring OD (80mm).</text>
+  <text x="755" y="178" class="stage-desc">Establish bilateral equality constraint for stability.</text>
+  <text x="755" y="198" class="stage-metric" fill="#16a34a">Pinch Force: ~25 N | Grip Gap: 0.080m</text>
+  <text x="755" y="214" class="stage-metric" fill="#16a34a">Verification: Weld distance delta &lt; 0.5mm</text>
+
+  <!-- Flow 3->4 (Row 1 down to Row 2) -->
+  <path d="M 890 230 L 890 270 L 180 270 L 180 300" class="connector" />
+
+  <!-- ROW 2: Stages 4 to 6 -->
+  <!-- Stage 4 -->
+  <rect x="30" y="300" width="300" height="130" class="box stage-card" />
+  <text x="45" y="322" class="stage-num">STAGE 04</text>
+  <text x="45" y="342" class="stage-title">Vertical Lift Clear</text>
+  <text x="45" y="362" class="stage-desc">Lift ring out of feeder nest vertically.</text>
+  <text x="45" y="378" class="stage-desc">Guarantees zero lip collision with hopper wall.</text>
+  <text x="45" y="398" class="stage-metric">Z-lift: +0.120m clearance</text>
+  <text x="45" y="414" class="stage-metric">Arm velocity: capped at max_accel = 1.2 m/s²</text>
+
+  <!-- Flow 4->5 -->
+  <path d="M 330 365 L 380 365" class="connector" />
+
+  <!-- Stage 5 -->
+  <rect x="385" y="300" width="300" height="130" class="box stage-card" />
+  <text x="400" y="322" class="stage-num">STAGE 05</text>
+  <text x="400" y="342" class="stage-title">Transit: Min-Jerk Chord Blend</text>
+  <text x="400" y="362" class="stage-desc">5th-order polynomial trajectory to conveyor.</text>
+  <text x="400" y="378" class="stage-desc">Optimized path avoids arm self-collisions &amp; base.</text>
+  <text x="400" y="398" class="stage-metric">Continuous acceleration profile, 0 jerk spikes</text>
+  <text x="400" y="414" class="stage-metric">Duration: 1.85s deterministic execution</text>
+
+  <!-- Flow 5->6 -->
+  <path d="M 685 365 L 735 365" class="connector" />
+
+  <!-- Stage 6 -->
+  <rect x="740" y="300" width="300" height="130" class="box stage-card" />
+  <text x="755" y="322" class="stage-num">STAGE 06</text>
+  <text x="755" y="342" class="stage-title">Conveyor Speed Synchronize</text>
+  <text x="755" y="362" class="stage-desc">Arm matches bottle conveyor linear velocity.</text>
+  <text x="755" y="378" class="stage-desc">Lead pursuit trajectory aligns with neck axis.</text>
+  <text x="755" y="398" class="stage-metric">v_belt = 0.0333 m/s tracking error &lt; 1.5mm</text>
+  <text x="755" y="414" class="stage-metric">Concentric Radial Distance &lt; 2.0mm</text>
+
+  <!-- Flow 6->7 (Row 2 down to Row 3) -->
+  <path d="M 890 430 L 890 460 L 180 460 L 180 480" class="connector" />
+
+  <!-- ROW 3: Stages 7 to 9 -->
+  <!-- Stage 7 -->
+  <rect x="30" y="480" width="300" height="120" class="box stage-card" />
+  <text x="45" y="500" class="stage-num">STAGE 07</text>
+  <text x="45" y="518" class="stage-title">Concentric Funnel Descent</text>
+  <text x="45" y="536" class="stage-desc">Slide ring over bottle top rim (OD 60mm).</text>
+  <text x="45" y="552" class="stage-metric">Clearance: ID 62mm vs Neck 60mm (1mm radial gap)</text>
+  <text x="45" y="568" class="stage-metric">Constraint: Tilt &lt; 0.10 rad (5.7 deg)</text>
+
+  <!-- Flow 7->8 -->
+  <path d="M 330 540 L 380 540" class="connector" />
+
+  <!-- Stage 8 -->
+  <rect x="385" y="480" width="300" height="120" class="box stage-critical" />
+  <text x="400" y="500" class="stage-num" fill="#16a34a">STAGE 08 [CRITICAL SEATING]</text>
+  <text x="400" y="518" class="stage-title">Shoulder Settle &amp; Open Release</text>
+  <text x="400" y="536" class="stage-desc">Rest ring on bottle shoulder; drop weld.</text>
+  <text x="400" y="552" class="stage-metric" fill="#16a34a">Release gate: Finger gap &gt; 0.090m before lift</text>
+  <text x="400" y="568" class="stage-metric" fill="#16a34a">Result: 0.000 rad tilt, radial err &lt; 1.0mm</text>
+
+  <!-- Flow 8->9 -->
+  <path d="M 685 540 L 735 540" class="connector" />
+
+  <!-- Stage 9 -->
+  <rect x="740" y="480" width="300" height="120" class="box stage-card" />
+  <text x="755" y="500" class="stage-num">STAGE 09</text>
+  <text x="755" y="518" class="stage-title">Vertical Clean Retreat</text>
+  <text x="755" y="536" class="stage-desc">Retract fingers up and away from moving kit.</text>
+  <text x="755" y="552" class="stage-metric">Zero ring contact or cocking drag</text>
+  <text x="755" y="568" class="stage-metric">Next state: Loop to Stage 01 for next kit</text>
+</svg>

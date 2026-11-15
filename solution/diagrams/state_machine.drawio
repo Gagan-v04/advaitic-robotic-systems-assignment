@@ -1,0 +1,55 @@
+<mxfile host="app.diagrams.net" modified="2026-11-15T14:10:00.000Z" agent="Antigravity" version="24.7.17">
+  <diagram id="fsm_1" name="Mission State Machine">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="init" value="START MISSION&#xa;(t = 0.0s, Origin x=1.0, y=3.0)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="nav_a" value="NAVIGATE STATION A&#xa;Trajectory tracking to Dock A&#xa;(3.0m, 2.0m, -pi/2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="220" y="80" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="dock_a" value="DOCK STATION A&#xa;Align base pose residual&#xa;&lt; 25mm / 2 deg tolerance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="80" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="work_a" value="WORK CELL STATION A&#xa;Assemble incoming kits 101-105&#xa;Monitor downstream inspection&#xa;Loop until 5 ACCEPTED" style="swimlane;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="30" width="340" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="hand_loop" value="Hand Sequence per Kit:&#xa;Hover -&gt; Descend -&gt; Close -&gt; Weld -&gt; Lift -&gt;&#xa;Carry (velocity feedforward) -&gt; Lower on Flange -&gt;&#xa;Settle -&gt; Open Fingers (&gt;90mm) -&gt; Release Weld -&gt;&#xa;Vertical Retreat -&gt; Emit ASSEMBLY_DONE" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="work_a">
+          <mxGeometry x="15" y="35" width="310" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stow_a" value="STOW ARM AT A&#xa;Tuck 6 joints to safe angles&#xa;Zero base velocity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="80" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="nav_b" value="NAVIGATE STATION B&#xa;Transit aisle to Dock B&#xa;(3.0m, 4.0m, +pi/2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="260" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="dock_b" value="DOCK STATION B&#xa;Align base pose residual&#xa;Send READY station 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="800" y="260" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="work_b" value="WORK CELL STATION B&#xa;Assemble incoming kits 201-205&#xa;Loop until 5 ACCEPTED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="260" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mission_done" value="MISSION COMPLETE&#xa;10/10 Accepted Assemblies&#xa;0 Violations, Sim &lt; 224s" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="260" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="human_stop" value="SAFETY SUPERVISOR (HUMAN STOP)&#xa;64-ray lidar detects human in aisle (&lt; 1m)&#xa;Hold joints, drop grasp, keep conveyor moving&#xa;Explicit resume 0.2s after aisle clear" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="280" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_init_nav" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1" source="init" target="nav_a" />
+        <mxCell id="e_nav_dock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1" source="nav_a" target="dock_a" />
+        <mxCell id="e_dock_work" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1" source="dock_a" target="work_a" />
+        <mxCell id="e_work_stow" value="5 Accepts Verified" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;fontStyle=1;strokeColor=#82b366;" edge="1" parent="1" source="work_a" target="stow_a" />
+        <mxCell id="e_stow_nav" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1" source="stow_a" target="nav_b" />
+        <mxCell id="e_nav_dockb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1" source="nav_b" target="dock_b" />
+        <mxCell id="e_dock_workb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;" edge="1" parent="1" source="dock_b" target="work_b" />
+        <mxCell id="e_work_done" value="5 Accepts Verified" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;fontStyle=1;strokeColor=#82b366;" edge="1" parent="1" source="work_b" target="mission_done" />
+        <mxCell id="e_safety_int" value="Emergency Interrupt / Resume" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;dashed=1;strokeColor=#b85450;" edge="1" parent="1" source="work_a" target="human_stop" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

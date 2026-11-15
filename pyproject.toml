@@ -15,16 +15,19 @@ dependencies = []
 systems-plc = "advaitic_systems.modbus:main"
 systems-check = "advaitic_systems.evidence:main"
 systems-timing = "advaitic_systems.timing:main"
+cell-run = "advaitic_cell.cli:main"
+cell-eval = "advaitic_cell.evaluate:main"
 
 [dependency-groups]
-dev = ["pytest>=8", "ruff>=0.12"]
+dev = ["pytest>=8", "ruff>=0.12", "pillow>=10"]
 physics = ["mujoco==3.8.1", "numpy>=1.26,<3"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/advaitic_systems"]
+packages = ["src/advaitic_systems", "src/advaitic_cell"]
 
 [tool.ruff]
 line-length = 100
+extend-exclude = [".pydeps"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "B"]
