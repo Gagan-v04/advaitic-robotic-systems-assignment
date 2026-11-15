@@ -1,0 +1,70 @@
+{
+  "sim_time_s": 223.496,
+  "wall_time_s": 154.54,
+  "events": 2277,
+  "belt_contacts": 0,
+  "min_clearance_m": 0.03942,
+  "abandoned": [],
+  "grasps": [
+    {
+      "t": 35.452,
+      "kit_id": 101,
+      "distance_m": -0.00184,
+      "engaged": true
+    },
+    {
+      "t": 49.044,
+      "kit_id": 102,
+      "distance_m": -0.00078,
+      "engaged": true
+    },
+    {
+      "t": 62.536,
+      "kit_id": 103,
+      "distance_m": 0.00243,
+      "engaged": true
+    },
+    {
+      "t": 76.136,
+      "kit_id": 104,
+      "distance_m": -0.00271,
+      "engaged": true
+    },
+    {
+      "t": 89.74,
+      "kit_id": 105,
+      "distance_m": 0.00115,
+      "engaged": true
+    },
+    {
+      "t": 143.048,
+      "kit_id": 201,
+      "distance_m": -0.00785,
+      "engaged": true
+    },
+    {
+      "t": 156.648,
+      "kit_id": 202,
+      "distance_m": -0.00321,
+      "engaged": true
+    },
+    {
+      "t": 170.148,
+      "kit_id": 203,
+      "distance_m": -0.00352,
+      "engaged": true
+    },
+    {
+      "t": 183.744,
+      "kit_id": 204,
+      "distance_m": -0.00251,
+      "engaged": true
+    },
+    {
+      "t": 197.348,
+      "kit_id": 205,
+      "distance_m": -0.00401,
+      "engaged": true
+    }
+  ]
+}

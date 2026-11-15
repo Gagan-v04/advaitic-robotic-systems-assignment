@@ -4,7 +4,8 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 .pydeps/
-results/
+results/*
+!results/nominal-seed-0/
 submission/checkpoints/
 .env
 third_party/mujoco_menagerie/google_robot/cell_scene.xml
