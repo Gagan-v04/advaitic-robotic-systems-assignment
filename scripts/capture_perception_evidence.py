@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
+import mujoco
 import numpy as np
 from PIL import Image
 
-import mujoco
-from advaitic_cell.scene import load_cell, base_pose
 from advaitic_cell.perception import _ray
+from advaitic_cell.scene import base_pose, load_cell
 
 
 def main() -> None:
