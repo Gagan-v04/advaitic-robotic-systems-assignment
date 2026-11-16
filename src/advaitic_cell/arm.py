@@ -445,7 +445,7 @@ class ArmController:
                 modest and start_tool > 0.90 and tool >= 0.88
             )
             if err > 0.045 or tool < 0.88 or not self._chord_clear(current, q, skip_fingers):
-                if err < best_err:
+                if best_q is None and err < best_err:
                     best_err, best_tool = err, tool
                 continue
             score = err + 0.2 * max(0.0, 0.96 - tool)

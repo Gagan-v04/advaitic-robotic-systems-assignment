@@ -12,7 +12,7 @@ An industrial-grade, fully autonomous mobile manipulation solution for dual-stat
 
 ## 1. System Architecture Overview
 
-The system controls a mobile manipulator (holonomic omnidirectional base + 6-DoF serial arm + 2-finger parallel-jaw gripper) operating across two asynchronous packaging stations. The mission requires assembling 10 tamper-evident collar rings onto continuously moving bottles (5 at Station 1, 5 at Station 2) within strict radial, tilt, and timing tolerances.
+The system controls a mobile manipulator (differential-drive mobile base + 6-DoF serial arm + 2-finger parallel-jaw gripper) operating across two asynchronous packaging stations. The mission requires assembling 10 tamper-evident collar rings onto continuously moving bottles (5 at Station 1, 5 at Station 2) within strict radial, tilt, and timing tolerances.
 
 ### 1.1 Embedded Architecture Flowchart
 
@@ -27,7 +27,7 @@ flowchart TB
     subgraph MotionControl["Motion & Trajectory Control"]
         TrajGen["Min-Jerk Trajectory Generator\n(5th-order Polynomial Blend)"]
         IK["Differential Inverse Kinematics\n(Damped Least-Squares SVD)"]
-        BaseServo["Base Omnidirectional Servo\n(Lead Pursuit & Station Holonomic)"]
+        BaseServo["Diff-Drive Navigation & Alignment Tracker\n(Pure Pursuit & Dock Creep)"]
         Planner --> TrajGen
         TrajGen --> IK
         Planner --> BaseServo
@@ -67,12 +67,12 @@ All scenarios were evaluated using the authoritative `systems-check` and `cell-e
 | **Kits Accepted (Station 1)** | 5 of 5 accepted | **5 / 5 (100%)** | Zero rejections |
 | **Kits Accepted (Station 2)** | 5 of 5 accepted | **5 / 5 (100%)** | Zero rejections |
 | **Total Accepted Assemblies** | 10 kits accepted | **10 / 10 (100%)** | **PERFECT (10/10)** |
-| **Radial Concentricity Error**| $\le 4.0\text{ mm}$ | **$0.8\text{ mm} - 1.2\text{ mm}$** | **70% under max tolerance** |
-| **Ring Seating Tilt Angle** | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.000\text{ rad}$ ($0.0^\circ$)** | **Zero-tilt seating** |
-| **Assembly Cycle Duration** | $\le 12.0\text{ s}$ per kit | **$8.2\text{ s} - 9.4\text{ s}$** | **$2.6\text{ s}$ headroom** |
-| **Nominal Mission Time** | $\le 270.0\text{ s}$ sim time | **$223.50\text{ s}$** | **$46.50\text{ s}$ under budget** |
-| **Human Obstacle Mission Time** | $\le 360.0\text{ s}$ sim time | **$252.20\text{ s}$** | **$107.80\text{ s}$ under budget** |
-| **Safety Violations (Human)** | 0 collisions, 0 speed violations | **0 collisions, 0 violations** | Clean stop & resume |
+| **Radial Concentricity Error**| $\le 4.0\text{ mm}$ | **$3.03\text{ mm} - 3.28\text{ mm}$ (mean $\approx 3.2\text{ mm}$)** | **$\approx 0.8\text{ mm}$ margin under max tolerance** |
+| **Ring Seating Tilt Angle** | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.0003 - 0.054\text{ rad}$ ($0.02^\circ - 3.1^\circ$)** | **Well within $10.0^\circ$ limit; $< 0.001\text{ rad}$ at inspection** |
+| **Assembly Cycle Duration** | $\le 12.0\text{ s}$ per kit | **$7.7\text{ s} - 12.0\text{ s}$** | **Slowest accepted cycle $11.980\text{ s}$ ($20\text{ ms}$ under cap; 4 cycles at $11.6 - 12.0\text{ s}$)** |
+| **Nominal Mission Time** | $\le 270.0\text{ s}$ sim time | **$223.50\text{ s} - 249.00\text{ s}$** | **$21.0\text{ s} - 46.5\text{ s}$ under budget across all seeds** |
+| **Human Obstacle Mission Time** | $\le 360.0\text{ s}$ sim time | **$319.44\text{ s}$** | **$40.56\text{ s}$ under budget** |
+| **Safety Violations (Human)** | 0 collisions, 0 speed violations | **0 collisions, 0 violations** | Clean 200 ms stop & resume |
 | **Modbus PLC Retry Handling** | Recover without duplicate counts | **10 / 10 accepted** | Clean idempotent retry |
 | **Pytest Unit Test Suite** | 100% passing | **47 / 47 passed** | 17.33 s execution |
 
@@ -80,8 +80,9 @@ All scenarios were evaluated using the authoritative `systems-check` and `cell-e
 
 ## 3. Engineering Documentation & Solution Architecture
 
-Detailed engineering design documentation and editable vector diagrams are maintained in [`solution/`](solution/):
+Detailed engineering design documentation and editable vector diagrams are maintained in [`solution/`](solution/) and [`docs/`](docs/):
 
+- **[Solution Summary (docs/SOLUTION.md)](docs/SOLUTION.md)**: Full run metrics, cycle timings, sensor configurations, and Aryan Q&A assumptions.
 - **[High-Level Design (HLD.md)](solution/HLD.md)**: System context, component decomposition, Modbus/TCP register memory map, and operational state transitions.
 - **[Low-Level Design (LLD.md)](solution/LLD.md)**: Kinematics, damped least-squares Jacobian servoing, 5th-order min-jerk trajectory blending, the 9-stage assembly lifecycle, and WSL2 hardware acceleration.
 - **[Constraints & Edge-Cases (CONSTRAINTS.md)](solution/CONSTRAINTS.md)**: Exact dimensions, feeder hopper clearances, velocity/acceleration envelopes, timing budgets, and safety recovery rules.
@@ -96,14 +97,19 @@ Detailed engineering design documentation and editable vector diagrams are maint
 
 ## 4. Canonical Full-Run Results Directory
 
-Per submission requirements, all verified simulation run data, logs, and evidence traces are consolidated into a single clean directory:
+Per submission requirements, all 5 canonical simulation runs are tracked and committed with their respective event logs, metrics, telemetry, and hold verifications:
 
-**[`results/nominal-seed-0/`](results/nominal-seed-0/)**
+1. **[`results/nominal-seed-0/`](results/nominal-seed-0/)** — Nominal seed 0 (223.50 s sim time, 10/10 accepted, 0 violations, includes full 1080p @ 30 fps mission video and camera views)
+2. **[`results/nominal-seed-1/`](results/nominal-seed-1/)** — Nominal seed 1 (249.00 s sim time, 10/10 accepted, 0 violations)
+3. **[`results/nominal-seed-2/`](results/nominal-seed-2/)** — Nominal seed 2 (223.80 s sim time, 10/10 accepted, 0 violations)
+4. **[`results/human-stop/`](results/human-stop/)** — Human stop safety scenario (319.44 s sim time, 10/10 accepted, 0 collisions, 0 violations, includes human stop video demonstration [human-stop.mp4](results/human-stop/human-stop.mp4))
+5. **[`results/plc-retry/`](results/plc-retry/)** — Modbus PLC socket disconnect and retry scenario (223.50 s sim time, 10/10 accepted, 0 duplicate counts, 0 violations)
+
+Each folder contains:
 - `events.jsonl` — Full event log validated by `systems-check` and `cell-eval`
 - `summary.json` — Machine-readable scorecard (`passed: true`, `accepted: {1: 5, 2: 5}`, `violations: []`)
 - `trace.json` — Real-time telemetry, joint positions, velocities, and tracking errors
 - `holds.json` — Seating verification samples showing verified radial errors and zero tilt
-- `full-mission.mp4` — Full 1080p @ 30 fps mission video recording
 
 ---
 
@@ -147,8 +153,8 @@ powershell -File scripts/run_gpu.ps1 --% cell-run --scenario nominal --seed 0 --
 
 ## 6. Key Engineering Innovations
 
-1. **Dual-Stage Release & Zero-Tilt Seating**:
-   Eliminated gripper-induced collar cocking ($tilt \approx 33^\circ$) by delaying vertical arm retreat until finger clearance $> 90\text{ mm}$ is confirmed by joint encoder feedback, ensuring $0.000\text{ rad}$ tilt across 100% of assemblies.
+1. **Dual-Stage Release & Upright Seating Alignment**:
+   Eliminated gripper-induced collar cocking ($tilt \approx 33^\circ$) by delaying vertical arm retreat until finger clearance $> 125\text{ mm}$ is confirmed by joint encoder feedback, ensuring seating radial error measures $3.03 - 3.28\text{ mm}$ (mean $\approx 3.2\text{ mm}$, well within the $4.0\text{ mm}$ tolerance) and tilt remains between $0.0003\text{ rad}$ and $0.054\text{ rad}$ ($< 3.1^\circ$, well within the $10.0^\circ$ tolerance), which settles to $< 0.001\text{ rad}$ ($< 0.06^\circ$) at downstream inspection.
 2. **Quintic Min-Jerk Chord Blending**:
    Eliminated trajectory jerk and dynamic sway during high-speed feeder-to-conveyor transfers, reducing transit cycle time while protecting delicate payload alignment.
 3. **OSMesa + RTX 5050 NVENC Rendering Engine**:

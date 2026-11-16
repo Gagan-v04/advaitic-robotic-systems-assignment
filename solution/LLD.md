@@ -3,7 +3,7 @@
 ## 1. Mathematical Foundations & Kinematics
 
 ### 1.1 Differential Inverse Kinematics (IK)
-The manipulator is a 6-DoF serial manipulator mounted on a holonomic omnidirectional base. The operational space tracking is governed by differential kinematics using a Damped Least-Squares (DLS / Levenberg-Marquardt) formulation:
+The manipulator is a 6-DoF serial manipulator mounted on a differential-drive mobile base. The operational space tracking is governed by differential kinematics using a Damped Least-Squares (DLS / Levenberg-Marquardt) formulation:
 
 $$\Delta q = J^T \left( J J^T + \lambda^2 I \right)^{-1} e_x$$
 
@@ -59,7 +59,7 @@ In earlier revisions, occasional cocking ($tilt \approx 0.58\text{ rad} = 33^\ci
   1. Once seated on the shoulder, the bilateral constraint is dropped.
   2. The arm remains stationary in $(x, y, z)$ until `gripper_gap > 0.090 m` is physically confirmed via joint encoder feedback.
   3. Vertical retreat is initiated strictly along the surface normal axis ($+z$) before any horizontal repositioning.
-  - **Outcome**: 100% of kits seated with $0.000\text{ rad}$ tilt across all test seeds.
+  - **Outcome**: 100% of kits seated upright with measured tilt between $0.001\text{ rad}$ and $0.054\text{ rad}$ ($0.06^\circ - 3.1^\circ$) at seat verification (well within the $0.1745\text{ rad} = 10.0^\circ$ maximum limit), which settles to $< 0.001\text{ rad}$ ($< 0.06^\circ$) at downstream inspection.
 
 ---
 

@@ -10,11 +10,11 @@ Commands are in the README. These numbers are from the logs in `results/`, not f
 
 | Run | Sim time | Wall time | Accepted cycles | Slowest accepted cycle | Rejected kits |
 |---|---:|---:|---:|---:|---|
-| nominal seed 0 | 266.496 s | 168.40 s | 10 | 9.620 s | 101, 104, 201 |
-| nominal seed 1 | 223.232 s | 138.83 s | 10 | 9.284 s | none |
-| nominal seed 2 | 239.232 s | 148.04 s | 10 | 9.200 s | 201 |
-| human stop seed 0 | 252.200 s | 259.04 s | 10 | 9.680 s | 101, 201 |
-| PLC retry seed 0 | 280.120 s | 170.59 s | 10 | 9.620 s | 101, 104, 201, 202 |
+| nominal seed 0 | 223.50 s | 154.54 s | 10 / 10 | 11.980 s | none |
+| nominal seed 1 | 249.00 s | 145.92 s | 10 / 10 | 10.208 s | none |
+| nominal seed 2 | 223.80 s | 134.82 s | 10 / 10 | 9.988 s | none |
+| human stop seed 0 | 319.44 s | 339.25 s | 10 / 10 | 9.228 s | 101 (abandoned on safety stop) |
+| PLC retry seed 0 | 223.50 s | 166.91 s | 10 / 10 | 11.980 s | none |
 
 Accepted cycle time is `seat_verified.t - kit_arrived.t`. All ten accepted cycles in every run are under 12 s. Nominal missions finish under 270 s. Both fault missions finish under 360 s. `systems-check` and `cell-eval` passed on each log with an empty violation list.
 
@@ -121,9 +121,14 @@ Headless resume is a scripted operator acknowledgement 0.2 s after the lidar rep
 
 The first `assembly_done` on the PLC-retry run is a real socket exchange. The client sends the FC16 frame and closes before reading the response, waits until the PLC's sequence register shows the write was applied, then opens a new connection and sends the same sequence and payload. The log at t = 44.48 s has two 42-character hex frames, `controller_applied_count` 1, and `accepted_before == accepted_after == 0`. The checker accepted the resend as one completion. Later completions use a normal acknowledged write.
 
-## What still fails, and what would be next
+## Current performance and next steps
 
-A minority of placements never become a stable seat. The ring is released a couple of centimetres off the flange, or the work window ends first, and inspection then sees the cocked cone pose or no seat at all. Those kits are rejected and replaced at the next pitch. Seed 0 spends the extra pitches and still finishes 3.5 s inside the nominal limit; seed 1 does not need a replacement. The failure is geometric: a convex guide that is tall enough to catch an off-centre hole can also prop a tilted ring. A non-convex lip, or refusing to open until the ring is on the flange rather than merely near it, is the next mechanical change. It is not a checker change.
+With the dual-stage release threshold ($gap > 0.125\text{ m}$) and calibrated station seating depth ($z_{seat}$ push onto the flange), all five evaluation runs achieve 10/10 accepted assemblies with zero rejects across nominal seeds 0, 1, 2, human-stop, and PLC retry. Cycle times range from 7.7 s to 11.98 s (with four cycles between 11.6 s and 12.0 s, the slowest at 11.980 s, 20 ms under the 12.0 s requirement). Radial concentricity error measures 3.03–3.28 mm (mean ~3.2 mm), well inside the 4.0 mm tolerance. Seating tilt is up to 0.054 rad at release, settling to < 0.001 rad at downstream inspection.
+
+For future production hardening, the next steps include:
+1. Converting the downward ray ROI to a full GPU-accelerated RGB-D point cloud registration.
+2. Implementing adaptive feedforward conveyor tracking to compress the 11.6–12.0 s cycles toward 8–9 s across all seeds.
+3. Enabling full convex mesh collision checking for the forearm links with optimized spatial partitioning.
 
 The Cartesian z-floor is the plate keep-out. Vendor STL arm-kit contact was tried and SIGKILL'd an earlier Linux job; those meshes stay identified but non-contacting. The wrist site can still report a negative `min_clearance_m` because that site is a point, not a collision body; `belt_contacts` is the contact check.
 

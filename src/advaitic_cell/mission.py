@@ -1043,13 +1043,14 @@ class Mission:
     ) -> np.ndarray:
         """Hand pose that puts the ring on the moving flange."""
         carrier = getattr(self, "plant", None) and self.plant.by_kit.get(job.kit_id)
-        station_lead = 0.0055 if self.station == 1 else 0.0010
+        station_lead = 0.0055 if self.station == 1 else 0.0022
+        z_seat = SEAT_WORLD_Z - (0.006 if self.station == 1 else 0.010)
         if carrier is not None:
             true_local_x = bottle_local_x(carrier.arrival_t, self.t, carrier.speed)
             goal = np.array(seat_world(self.station, true_local_x + carrier.speed * lead_s + station_lead), dtype=float)
-            goal[2] = SEAT_WORLD_Z - 0.006
+            goal[2] = z_seat
         else:
-            goal = self._bottle_target(SEAT_WORLD_Z - 0.006, clamp=False, lead_s=lead_s + 0.096)
+            goal = self._bottle_target(z_seat, clamp=False, lead_s=lead_s + 0.096)
         trim_x = getattr(job, "trim_x", 0.0)
         trim_y = getattr(job, "trim_y", 0.0)
         if self.station == 1:

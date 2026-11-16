@@ -6,6 +6,10 @@ __pycache__/
 .pydeps/
 results/*
 !results/nominal-seed-0/
+!results/nominal-seed-1/
+!results/nominal-seed-2/
+!results/human-stop/
+!results/plc-retry/
 submission/checkpoints/
 .env
 third_party/mujoco_menagerie/google_robot/cell_scene.xml

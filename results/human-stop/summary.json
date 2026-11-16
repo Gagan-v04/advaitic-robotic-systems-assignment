@@ -1,0 +1,114 @@
+{
+  "sim_time_s": 319.436,
+  "wall_time_s": 339.25,
+  "events": 3261,
+  "belt_contacts": 0,
+  "min_clearance_m": 0.03139,
+  "abandoned": [
+    101
+  ],
+  "grasps": [
+    {
+      "t": 35.452,
+      "kit_id": 101,
+      "distance_m": -0.00184,
+      "engaged": true
+    },
+    {
+      "t": 49.02,
+      "kit_id": 102,
+      "distance_m": -0.00944,
+      "engaged": true
+    },
+    {
+      "t": 62.536,
+      "kit_id": 103,
+      "distance_m": -1e-05,
+      "engaged": true
+    },
+    {
+      "t": 76.144,
+      "kit_id": 104,
+      "distance_m": -0.0002,
+      "engaged": true
+    },
+    {
+      "t": 89.744,
+      "kit_id": 105,
+      "distance_m": 0.0,
+      "engaged": true
+    },
+    {
+      "t": 103.248,
+      "kit_id": 106,
+      "distance_m": -0.00264,
+      "engaged": true
+    },
+    {
+      "t": 116.828,
+      "kit_id": 107,
+      "distance_m": -0.00025,
+      "engaged": true
+    },
+    {
+      "t": 130.428,
+      "kit_id": 108,
+      "distance_m": -0.00012,
+      "engaged": true
+    },
+    {
+      "t": 144.028,
+      "kit_id": 109,
+      "distance_m": -0.0001,
+      "engaged": true
+    },
+    {
+      "t": 157.528,
+      "kit_id": 110,
+      "distance_m": -0.00045,
+      "engaged": true
+    },
+    {
+      "t": 171.128,
+      "kit_id": 111,
+      "distance_m": -0.00029,
+      "engaged": true
+    },
+    {
+      "t": 225.548,
+      "kit_id": 201,
+      "distance_m": -0.00737,
+      "engaged": true
+    },
+    {
+      "t": 239.124,
+      "kit_id": 202,
+      "distance_m": -0.00382,
+      "engaged": true
+    },
+    {
+      "t": 252.644,
+      "kit_id": 203,
+      "distance_m": -0.0067,
+      "engaged": true
+    },
+    {
+      "t": 266.228,
+      "kit_id": 204,
+      "distance_m": -0.00675,
+      "engaged": true
+    },
+    {
+      "t": 279.836,
+      "kit_id": 205,
+      "distance_m": -0.00652,
+      "engaged": true
+    },
+    {
+      "t": 293.34,
+      "kit_id": 206,
+      "distance_m": -0.00688,
+      "engaged": true
+    }
+  ]
+}

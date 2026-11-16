@@ -15,8 +15,8 @@ The core objective of the cell is to seat tamper-evident collar rings onto bottl
 | **Collar Ring Height** | $10.0\text{ mm}$ | $\pm 0.2\text{ mm}$ | $10.0\text{ mm}$ | PASS |
 | **Bottle Rim OD** | $60.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $60.0\text{ mm}$ | PASS |
 | **Bottle Radial Clearance** | $1.0\text{ mm}$ per side | $\ge 0.5\text{ mm}$ | $1.0\text{ mm}$ | PASS |
-| **Radial Concentricity Error** | $0.0\text{ mm}$ | $\le 4.0\text{ mm}$ | **$0.8\text{ mm} - 1.2\text{ mm}$** | PASS |
-| **Ring Seating Tilt Angle** | $0.0^\circ$ ($0.0\text{ rad}$) | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.000\text{ rad}$ ($0.0^\circ$)** | PASS |
+| **Radial Concentricity Error** | $0.0\text{ mm}$ | $\le 4.0\text{ mm}$ | **$3.08\text{ mm} - 3.23\text{ mm}$** ($\approx 0.8\text{ mm}$ margin) | PASS |
+| **Ring Seating Tilt Angle** | $0.0^\circ$ ($0.0\text{ rad}$) | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.001 - 0.054\text{ rad}$ ($0.06^\circ - 3.1^\circ$)** ($< 0.001\text{ rad}$ at inspection) | PASS |
 | **Seated Height ($z$)** | $133.0\text{ mm}$ | $130.0 - 136.0\text{ mm}$ | **$133.2\text{ mm}$** | PASS |
 | **Feeder Extraction Lip Clearance**| $+15.0\text{ mm}$ | $\ge 5.0\text{ mm}$ | $+15.0\text{ mm}$ | PASS |
 

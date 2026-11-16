@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary
 
-The Advaitic Robotic Systems manufacturing cell is a fully autonomous dual-station packaging assembly environment. A mobile manipulator comprising an omnidirectional holonomic base, a 6-DoF serial arm, and a 2-finger parallel-jaw gripper must navigate between two distinct workcells, coordinate with station PLCs via Modbus/TCP, and seat 10 precision tamper-evident collar rings onto continuously moving bottles across two conveyor belts (5 rings at Station 1, 5 rings at Station 2).
+The Advaitic Robotic Systems manufacturing cell is a fully autonomous dual-station packaging assembly environment. A mobile manipulator comprising a differential-drive mobile base, a 6-DoF serial arm, and a 2-finger parallel-jaw gripper must navigate between two distinct workcells, coordinate with station PLCs via Modbus/TCP, and seat 10 precision tamper-evident collar rings onto continuously moving bottles across two conveyor belts (5 rings at Station 1, 5 rings at Station 2).
 
 All operations must strictly satisfy sub-millimeter tolerances, physical clearance limits, dynamic timing budgets, safety supervisor standards, and Modbus/TCP communication protocols without any manual intervention.
 
@@ -28,7 +28,7 @@ flowchart TB
     subgraph MotionControl["T2: Motion & Trajectory Generation"]
         TrajGen["Min-Jerk Trajectory Generator\n(5th-order Polynomial Blend)"]
         IK["Differential Inverse Kinematics\n(Damped Least-Squares SVD)"]
-        BaseServo["Base Omnidirectional Servo\n(Lead Pursuit & Station Holonomic)"]
+        BaseServo["Diff-Drive Navigation & Alignment Tracker\n(Pure Pursuit & Dock Creep)"]
         Planner --> TrajGen
         TrajGen --> IK
         Planner --> BaseServo
