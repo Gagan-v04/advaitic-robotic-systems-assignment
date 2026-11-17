@@ -12,7 +12,7 @@ An industrial-grade, fully autonomous mobile manipulation solution for dual-stat
 
 ## 1. System Architecture Overview
 
-The system controls a mobile manipulator (differential-drive mobile base + 6-DoF serial arm + 2-finger parallel-jaw gripper) operating across two asynchronous packaging stations. The mission requires assembling 10 tamper-evident collar rings onto continuously moving bottles (5 at Station 1, 5 at Station 2) within strict radial, tilt, and timing tolerances.
+The system controls the Google Robot on a differential-drive mobile base equipped with a 2-finger parallel-jaw gripper operating across two asynchronous packaging stations. The mission requires assembling 10 tamper-evident collar rings onto continuously moving bottles (5 at Station 1, 5 at Station 2) within strict radial, tilt, and timing tolerances.
 
 ### 1.1 Embedded Architecture Flowchart
 
@@ -64,9 +64,9 @@ All scenarios were evaluated using the authoritative `systems-check` and `cell-e
 
 | Evaluation Metric | Customer Requirement | Achieved Result | Margin / Status |
 | :--- | :--- | :--- | :--- |
-| **Kits Accepted (Station 1)** | 5 of 5 accepted | **5 / 5 (100%)** | Zero rejections |
-| **Kits Accepted (Station 2)** | 5 of 5 accepted | **5 / 5 (100%)** | Zero rejections |
-| **Total Accepted Assemblies** | 10 kits accepted | **10 / 10 (100%)** | **PERFECT (10/10)** |
+| **Kits Accepted (Station 1)** | 5 of 5 accepted | **5 / 5 (100%)** | 5 accepted / 5 target |
+| **Kits Accepted (Station 2)** | 5 of 5 accepted | **5 / 5 (100%)** | 5 accepted / 5 target |
+| **Total Accepted Assemblies** | 10 kits accepted | **10 / 10 (100%)** | **10 / 10 accepted across stations** |
 | **Radial Concentricity Error**| $\le 4.0\text{ mm}$ | **$3.03\text{ mm} - 3.28\text{ mm}$ (mean $\approx 3.2\text{ mm}$)** | **$\approx 0.8\text{ mm}$ margin under max tolerance** |
 | **Ring Seating Tilt Angle** | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.0003 - 0.054\text{ rad}$ ($0.02^\circ - 3.1^\circ$)** | **Well within $10.0^\circ$ limit; $< 0.001\text{ rad}$ at inspection** |
 | **Assembly Cycle Duration** | $\le 12.0\text{ s}$ per kit | **$7.7\text{ s} - 12.0\text{ s}$** | **Slowest accepted cycle $11.980\text{ s}$ ($20\text{ ms}$ under cap; 4 cycles at $11.6 - 12.0\text{ s}$)** |
@@ -93,6 +93,16 @@ Detailed engineering design documentation and editable vector diagrams are maint
   - [Pick & Place Pipeline](solution/diagrams/pick_and_place_pipeline.svg) (`pick_and_place_pipeline.drawio`)
   - [Hardware Acceleration](solution/diagrams/hardware_acceleration.svg) (`hardware_acceleration.drawio`)
 
+### 3.1 Agreed Assumptions
+
+Per the technical clarifications documented in [`docs/SOLUTION.md`](docs/SOLUTION.md):
+
+1. **Feeder and READY**: Kits may be released close to the work-entry line; the feeder already spawns about 0.20 s (a few millimetres) before the crossing. READY for a station may be sent while the AMR is still travelling, timed so the first kit is near entry as docking finishes. Station B is never READYed until Station A has five accepted kits in the PLC.
+2. **Process Split**: The robot controller is a set of modules (`Mission`, `ArmController`, `CartesianServo`, `Estimator`) in the same lockstep `mj_step` process as the plant simulation without a secondary OS process.
+3. **Dock Offset**: A small recorded offset is permitted if required by reach. Spec docks already reach, so station goals remain unchanged. `trace.json` records the measured residual, bounded within the checker's 25 mm / 2° dock event window.
+4. **Human-Stop Resume**: After the 64-beam LiDAR reports the human worker cleared (and after the 2.0 s minimum duration has elapsed), a scripted operator acknowledgement writes `resume` 0.2 s later as the explicit recovery edge in a headless run.
+5. **Interrupted Grasp**: If a kit in hand must be rejected during an interruption, the bilateral grasp constraint is released and jaws open so the ring falls where it is. The robot does not carry that ring to the next station or stash it off-stage.
+
 ---
 
 ## 4. Canonical Full-Run Results Directory
@@ -107,9 +117,9 @@ Per submission requirements, all 5 canonical simulation runs are tracked and com
 
 Each folder contains:
 - `events.jsonl` — Full event log validated by `systems-check` and `cell-eval`
-- `summary.json` — Machine-readable scorecard (`passed: true`, `accepted: {1: 5, 2: 5}`, `violations: []`)
+- `summary.json` — Run summary metrics (`sim_time_s`, `wall_time_s`, `events`, `belt_contacts`, `min_clearance_m`, `abandoned`, `grasps`)
 - `trace.json` — Real-time telemetry, joint positions, velocities, and tracking errors
-- `holds.json` — Seating verification samples showing verified radial errors and zero tilt
+- `holds.json` — Seating verification samples showing verified radial errors, height, and tilt
 
 ---
 

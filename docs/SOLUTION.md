@@ -11,9 +11,9 @@ Commands are in the README. These numbers are from the logs in `results/`, not f
 | Run | Sim time | Wall time | Accepted cycles | Slowest accepted cycle | Rejected kits |
 |---|---:|---:|---:|---:|---|
 | nominal seed 0 | 223.50 s | 154.54 s | 10 / 10 | 11.980 s | none |
-| nominal seed 1 | 249.00 s | 145.92 s | 10 / 10 | 10.208 s | none |
+| nominal seed 1 | 249.00 s | 145.92 s | 10 / 10 | 10.208 s | 203, 205 |
 | nominal seed 2 | 223.80 s | 134.82 s | 10 / 10 | 9.988 s | none |
-| human stop seed 0 | 319.44 s | 339.25 s | 10 / 10 | 9.228 s | 101 (abandoned on safety stop) |
+| human stop seed 0 | 319.44 s | 339.25 s | 10 / 10 | 9.228 s | 101 (abandoned), 102, 104, 107, 108, 109, 204 |
 | PLC retry seed 0 | 223.50 s | 166.91 s | 10 / 10 | 11.980 s | none |
 
 Accepted cycle time is `seat_verified.t - kit_arrived.t`. All ten accepted cycles in every run are under 12 s. Nominal missions finish under 270 s. Both fault missions finish under 360 s. `systems-check` and `cell-eval` passed on each log with an empty violation list.
@@ -30,11 +30,11 @@ Station-change time is dock B minus the moment station A is released:
 
 | Run | Leave A | Dock B | Transfer |
 |---|---:|---:|---:|
-| nominal 0 | 143.36 s | 169.70 s | 26.34 s |
-| nominal 1 | 114.23 s | 140.60 s | 26.37 s |
-| nominal 2 | 116.84 s | 143.30 s | 26.46 s |
-| human stop | 129.85 s | 155.40 s | 25.55 s |
-| PLC retry | 143.36 s | 169.70 s | 26.34 s |
+| nominal 0 | 115.80 s | 141.00 s | 25.20 s |
+| nominal 1 | 114.30 s | 139.70 s | 25.40 s |
+| nominal 2 | 116.80 s | 141.80 s | 25.00 s |
+| human stop | 197.80 s | 223.50 s | 25.70 s |
+| PLC retry | 115.80 s | 141.00 s | 25.20 s |
 
 Without the demo renderer the nominal and PLC runs are about 1.6× realtime on Ubuntu-24.04 WSL (`MUJOCO_GL=osmesa`, `/opt/ars-venv`). The human-stop run can write `results/human-stop/demo.gif`. Visual demos in `results/demo/` are 1920×1080 on the WSL GPU path: `powershell -File scripts/run_gpu.ps1 cell-run ... --video results/demo/full-mission.mp4` (`MUJOCO_GL=egl`, Mesa d3d12, cameras sequential, mosaic also 1920×1080). `GL_RENDERER` is `D3D12 (NVIDIA GeForce RTX 5050 Laptop GPU)`. Host `mujoco.dll` is blocked by Application Control; this cell is not run through Docker Desktop.
 
@@ -111,9 +111,9 @@ The person is a vendored low-poly worker mesh (`third_party/person/`, Apache-2.0
 
 On seed 0 the log is:
 
-- `human_enter` and `stop_command` at t = 36.184 s (same sample)
-- `human_exit` at t = 38.944 s (2.760 s later, inside 2–4 s)
-- `resume` at t = 39.144 s, and not before the exit
+- `human_enter` and `stop_command` at t = 35.928 s (same sample)
+- `human_exit` at t = 38.500 s (2.572 s later, inside 2–4 s)
+- `resume` at t = 38.700 s, and not before the exit
 
 Headless resume is a scripted operator acknowledgement 0.2 s after the lidar reports clear (Aryan, 10 Nov). During the stop the arm joints and the base are held. If the interrupted kit is already grasped, the weld is dropped and the jaws open so the ring falls in the cell; it is not carried away or hidden. The belt keeps moving. That kit is abandoned and the next one is assembled after resume.
 
@@ -123,7 +123,7 @@ The first `assembly_done` on the PLC-retry run is a real socket exchange. The cl
 
 ## Current performance and next steps
 
-With the dual-stage release threshold ($gap > 0.125\text{ m}$) and calibrated station seating depth ($z_{seat}$ push onto the flange), all five evaluation runs achieve 10/10 accepted assemblies with zero rejects across nominal seeds 0, 1, 2, human-stop, and PLC retry. Cycle times range from 7.7 s to 11.98 s (with four cycles between 11.6 s and 12.0 s, the slowest at 11.980 s, 20 ms under the 12.0 s requirement). Radial concentricity error measures 3.03–3.28 mm (mean ~3.2 mm), well inside the 4.0 mm tolerance. Seating tilt is up to 0.054 rad at release, settling to < 0.001 rad at downstream inspection.
+With the dual-stage release threshold ($gap > 0.125\text{ m}$) and calibrated station seating depth ($z_{seat}$ push onto the flange), all five evaluation runs achieve 10/10 accepted assemblies within mission limits across nominal seeds 0, 1, 2, human-stop, and PLC retry. Rejected kits (such as 203 and 205 in seed 1, or cocked attempts during human-stop) are cleanly replaced downstream. Cycle times range from 7.7 s to 11.98 s (with four cycles between 11.6 s and 12.0 s, the slowest at 11.980 s, 20 ms under the 12.0 s requirement). Radial concentricity error measures 3.03–3.28 mm (mean ~3.2 mm), well inside the 4.0 mm tolerance. Seating tilt is up to 0.054 rad at release, settling to < 0.001 rad at downstream inspection.
 
 For future production hardening, the next steps include:
 1. Converting the downward ray ROI to a full GPU-accelerated RGB-D point cloud registration.

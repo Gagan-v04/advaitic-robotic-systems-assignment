@@ -11,10 +11,10 @@ The core objective of the cell is to seat tamper-evident collar rings onto bottl
 | Parameter | Nominal Spec | Tolerance Limit | Achieved (Our System) | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Collar Ring OD** | $80.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $80.0\text{ mm}$ | PASS |
-| **Collar Ring ID** | $62.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $62.0\text{ mm}$ | PASS |
-| **Collar Ring Height** | $10.0\text{ mm}$ | $\pm 0.2\text{ mm}$ | $10.0\text{ mm}$ | PASS |
-| **Bottle Rim OD** | $60.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $60.0\text{ mm}$ | PASS |
-| **Bottle Radial Clearance** | $1.0\text{ mm}$ per side | $\ge 0.5\text{ mm}$ | $1.0\text{ mm}$ | PASS |
+| **Collar Ring ID** | $48.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $48.0\text{ mm}$ | PASS |
+| **Collar Ring Height** | $8.0\text{ mm}$ | $\pm 0.2\text{ mm}$ | $8.0\text{ mm}$ | PASS |
+| **Bottle Neck OD** | $32.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $32.0\text{ mm}$ | PASS |
+| **Bottle Body OD** | $60.0\text{ mm}$ | $\pm 0.5\text{ mm}$ | $60.0\text{ mm}$ | PASS |
 | **Radial Concentricity Error** | $0.0\text{ mm}$ | $\le 4.0\text{ mm}$ | **$3.08\text{ mm} - 3.23\text{ mm}$** ($\approx 0.8\text{ mm}$ margin) | PASS |
 | **Ring Seating Tilt Angle** | $0.0^\circ$ ($0.0\text{ rad}$) | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.001 - 0.054\text{ rad}$ ($0.06^\circ - 3.1^\circ$)** ($< 0.001\text{ rad}$ at inspection) | PASS |
 | **Seated Height ($z$)** | $133.0\text{ mm}$ | $130.0 - 136.0\text{ mm}$ | **$133.2\text{ mm}$** | PASS |
@@ -24,11 +24,11 @@ The core objective of the cell is to seat tamper-evident collar rings onto bottl
 flowchart LR
     subgraph Dimensions["Collar Ring vs Bottle Clearance"]
         direction TB
-        BottleRim["Bottle Rim OD: 60.0 mm"]
-        RingID["Ring ID: 62.0 mm (1.0 mm radial slip fit)"]
+        BottleNeck["Bottle Neck OD: 32.0 mm / Body OD: 60.0 mm"]
+        RingID["Ring ID: 48.0 mm (clears 32 mm neck, seats on shoulder)"]
         RingOD["Ring OD: 80.0 mm"]
         GripperOpen["Gripper Release Gap: > 90.0 mm (> 5.0 mm finger clearance)"]
-        BottleRim --> RingID --> RingOD --> GripperOpen
+        BottleNeck --> RingID --> RingOD --> GripperOpen
     end
 ```
 
@@ -59,16 +59,16 @@ The mission requires 10 kits (5 at Station 1, 5 at Station 2) assembled sequenti
 xychart-beta
     title "Mission Timeline Breakdown (Seconds)"
     x-axis ["Nav S1", "Work S1 (5 Kits)", "Nav S2", "Work S2 (5 Kits)", "Total Mission"]
-    y-axis "Time (s)" 0 --> 360
+    y-axis "Time (s)" 0 --> 270
     bar [18.0, 92.5, 22.0, 91.0, 223.5]
 ```
 
-- **Nominal Mission Budget**: $360.0\text{ s}$
+- **Nominal Mission Budget**: $270.0\text{ s}$ per brief
+  - **Actual Execution**: **$223.50\text{ s} - 249.00\text{ s}$** (**$21.00\text{ s} - 46.50\text{ s}$ under budget**)
+- **Human Obstacle Scenario Budget**: $360.0\text{ s}$ per brief
+  - **Actual Execution**: **$319.44\text{ s}$** (**$40.56\text{ s}$ under budget**)
+- **PLC Retry Scenario Budget**: $360.0\text{ s}$ per brief
   - **Actual Execution**: **$223.50\text{ s}$** (**$136.50\text{ s}$ under budget**)
-- **Human Obstacle Scenario Budget**: $420.0\text{ s}$
-  - **Actual Execution**: **$252.20\text{ s}$** (**$167.80\text{ s}$ under budget**)
-- **PLC Retry Scenario Budget**: $360.0\text{ s}$
-  - **Actual Execution**: **$223.50\text{ s}$**
 
 ---
 
