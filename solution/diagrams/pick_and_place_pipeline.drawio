@@ -4,35 +4,35 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="phase1" value="1. HOVER&#xa;Position hand 5cm above ring&#xa;Wrist vertical (cosine &gt; 0.98)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase1" value="1. HOVER&#xa;HOVER_Z = GRASP_Z + 85 mm&#xa;Advance: err &lt; 35 mm, tool-down &gt; 0.88" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="60" width="180" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="phase2" value="2. DESCEND&#xa;Min-jerk chord down to ring&#xa;Finger gap open to 135 mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase2" value="2. DESCEND&#xa;Track the encoder + 5x5 ray target&#xa;err &lt; 30 mm, tool-down &gt; 0.92" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="260" y="60" width="180" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="phase3" value="3. CLOSE &amp; WELD&#xa;Close jaws, detect contact&#xa;Engage equality constraint&#xa;Freeze weld relative pose" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase3" value="3. CLOSE AND WELD&#xa;After 0.30 s, gap &lt; 0.12, tool-down &gt; 0.90&#xa;Engage if ring &lt; 16 mm and gap &lt; 0.11 m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="480" y="60" width="190" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="phase4" value="4. LIFT&#xa;Straight vertical climb&#xa;Raise ring clear of kit tray&#xa;(Z_ring &gt;= 0.93m)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase4" value="4. LIFT&#xa;Straight up to 0.968 m, XY frozen&#xa;Ring z &gt;= ring centre + 30 mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="710" y="60" width="180" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="phase5" value="5. CARRY &amp; LEAD&#xa;Track moving bottle at v=33mm/s&#xa;Lead-time lookahead = 60ms&#xa;Interpolate to bottle neck center" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase5" value="5. CARRY&#xa;Wait on a column, 80 ms lead&#xa;Go when bottle x &gt;= -0.08 m (A) or -0.084 m (B)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="930" y="60" width="210" height="60" as="geometry" />
         </mxCell>
 
-        <mxCell id="phase6" value="6. LOWER ON CONE&#xa;Descend ring over bottle neck&#xa;Servo ring body (not fingertip)&#xa;Align concentric with cone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase6" value="6. LOWER&#xa;Uses plant arrival time and ring xpos&#xa;Radial &lt; 10 mm, z 128-145 mm, ring-up &gt; 0.90" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="930" y="180" width="210" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="phase7" value="7. SETTLE ON SHOULDER&#xa;Rest on frustum (z in [130,136]mm)&#xa;Verify live radial error &lt; 2.2mm&#xa;Check ring uprightness &gt; 0.94" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase7" value="7. SETTLE&#xa;Integral trim, gain 0.05 (A) or 0.08 (B)&#xa;Open when radial &lt; 3.6 mm and ring-up &gt; 0.94" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="710" y="180" width="180" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="phase8" value="8. SAFE FINGER RELEASE&#xa;Open jaws while weld still active&#xa;WAIT until finger gap &gt; 90 mm&#xa;Drop weld only with ZERO contact&#xa;Eliminates 33 deg cocking!" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase8" value="8. OPEN&#xa;Jaws open while the weld still holds&#xa;Release when gap &gt; 0.090 m and seat gates pass&#xa;Fallbacks at 2.2 s and 2.8 s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="440" y="170" width="230" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="phase9" value="9. VERTICAL RETREAT&#xa;Climb vertically to RETREAT_Z&#xa;Emit ASSEMBLY_DONE to PLC&#xa;Ring stable on shoulder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="phase9" value="9. RETREAT&#xa;Climb to 1.005 m at 0.45 m/s&#xa;ASSEMBLY_DONE after 0.05 s&#xa;Robot claim, not the accepted count" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="220" y="180" width="180" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="success" value="INSPECTION PASS&#xa;Radial &lt;= 4mm&#xa;Tilt = 0.000 rad&#xa;Hold &gt;= 0.50 s" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="success" value="PLANT INSPECTION&#xa;Radial &lt;= 4 mm, z 130-136 mm&#xa;Tilt &lt;= 10 deg, hold &gt;= 0.5 s&#xa;Independent of ASSEMBLY_DONE" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="175" width="140" height="70" as="geometry" />
         </mxCell>
 

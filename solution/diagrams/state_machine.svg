@@ -44,8 +44,8 @@
   <!-- State: Nav Stn 1 -->
   <rect x="200" y="115" width="200" height="70" class="box state-box" />
   <text x="215" y="142" class="text-bold">1. NAVIGATE STN 1</text>
-  <text x="215" y="162" class="text-sub">Cartesian Servo: Base -&gt; (1.60, 0.45)</text>
-  <text x="215" y="176" class="text-code">Tuck Arm: [0, -1.57, 1.57, -1.57, -1.57, 0]</text>
+  <text x="215" y="162" class="text-sub">A* to dock A (3.0, 2.0, -pi/2)</text>
+  <text x="215" y="176" class="text-code">Arm stows to the zero pose before the base moves</text>
 
   <!-- Transition: Nav Stn 1 to Work Stn 1 -->
   <path d="M 400 150 L 485 150" class="arrow" />
@@ -55,7 +55,7 @@
   <rect x="490" y="100" width="240" height="100" class="box state-work" />
   <text x="505" y="125" class="text-bold">2. WORK STATION 1</text>
   <text x="505" y="145" class="text-sub">Assemble Kits 101 - 105 (5 rings)</text>
-  <text x="505" y="163" class="text-sub">Conveyor tracking + min-jerk blend</text>
+  <text x="505" y="163" class="text-sub">READY after preposition, then the hand states</text>
   <text x="505" y="181" class="text-code">Modbus: read kits_accepted == 5</text>
 
   <!-- Self-loop: Next kit at Stn 1 -->
@@ -69,8 +69,8 @@
   <!-- State: Nav Stn 2 -->
   <rect x="820" y="115" width="160" height="70" class="box state-box" />
   <text x="835" y="142" class="text-bold">3. NAVIGATE STN 2</text>
-  <text x="835" y="162" class="text-sub">Base -&gt; (3.20, 0.45)</text>
-  <text x="835" y="176" class="text-code">Tuck Arm Pose</text>
+  <text x="835" y="162" class="text-sub">Dock B (3.0, 4.0, +pi/2), creep y +8 mm</text>
+  <text x="835" y="176" class="text-code">Seven arm joints, stowed</text>
 
   <!-- Path from Nav Stn 2 to Work Stn 2 (curved down to second row) -->
   <path d="M 900 185 L 900 270 L 735 270" class="arrow" />
@@ -80,7 +80,7 @@
   <rect x="490" y="220" width="240" height="100" class="box state-work" />
   <text x="505" y="245" class="text-bold">4. WORK STATION 2</text>
   <text x="505" y="265" class="text-sub">Assemble Kits 201 - 205 (5 rings)</text>
-  <text x="505" y="283" class="text-sub">Fast tracking &amp; dual-stage seat</text>
+  <text x="505" y="283" class="text-sub">Same hand states. Place uses ring xpos</text>
   <text x="505" y="301" class="text-code">Modbus: read kits_accepted == 5</text>
 
   <!-- Self-loop: Next kit at Stn 2 -->
@@ -95,7 +95,7 @@
   <rect x="160" y="235" width="170" height="70" class="box state-done" />
   <text x="175" y="262" class="text-bold" fill="#15803d">5. COMPLETE</text>
   <text x="175" y="282" class="text-sub">Total Accepted: 10 / 10</text>
-  <text x="175" y="296" class="text-code" fill="#15803d">Violations: 0 | Passed: True</text>
+  <text x="175" y="296" class="text-code" fill="#15803d">Committed logs: belt_contacts = 0</text>
 
   <!-- Double circle for end state -->
   <circle cx="80" cy="270" r="18" fill="none" stroke="#16a34a" stroke-width="3" />
@@ -109,23 +109,22 @@
   <!-- Safety Stop Node -->
   <rect x="50" y="460" width="380" height="160" class="box state-safety" />
   <text x="70" y="488" class="text-bold" fill="#be123c">Human Intrusion Safety Stop (Scenario: human-stop)</text>
-  <text x="70" y="512" class="text-sub">- 64-ray radial LiDAR scan: 360 deg, range 1.8m</text>
-  <text x="70" y="530" class="text-sub">- Trigger: point cloud hits human geom &lt; 1.2m</text>
-  <text x="70" y="548" class="text-sub">- Action: Set target_vel = 0, lock arm brakes, halt trajectory clock</text>
-  <text x="70" y="566" class="text-sub">- Clearing: When human dist &gt; 1.5m for 500ms, smooth re-accel</text>
-  <text x="70" y="590" class="text-code" fill="#e11d48">Guarantee: 0 collisions, 0 speed limit violations during pause</text>
+  <text x="70" y="512" class="text-sub">- 64 rays at z = 0.6 m, work phase, after the person starts</text>
+  <text x="70" y="530" class="text-sub">- human* geom within 1.0 m, or inside the aisle box; job must be active</text>
+  <text x="70" y="548" class="text-sub">- Write saved arm, finger, and base qpos back after mj_step</text>
+  <text x="70" y="566" class="text-sub">- Clear: 5 misses and 2.0 s, then resume is logged 0.2 s later</text>
+  <text x="70" y="590" class="text-code" fill="#e11d48">Person contact is off. Stop is a qpos hold in work</text>
 
-  <!-- Connecting dashed lines to Safety Node -->
-  <path d="M 300 185 L 300 455" class="arrow-safety" />
+  <!-- Dashed lines from the work states. Navigation does not enter this stop. -->
   <path d="M 610 200 L 610 455" class="arrow-safety" />
   <path d="M 610 320 L 610 455" class="arrow-safety" />
 
   <!-- PLC Retry Node -->
   <rect x="540" y="460" width="410" height="160" class="box state-plc" />
   <text x="560" y="488" class="text-bold" fill="#a16207">Modbus/PLC Resynchronization (Scenario: plc-retry)</text>
-  <text x="560" y="512" class="text-sub">- Modbus Register 40001: Heartbeat / Watchdog counter</text>
-  <text x="560" y="530" class="text-sub">- Register 40002: Kit Stage Status [IDLE, GRASP, TRANSIT, SEAT]</text>
-  <text x="560" y="548" class="text-sub">- Fault Trigger: CRC error or Station E-stop flag raised</text>
-  <text x="560" y="566" class="text-sub">- Recovery: Retry handshake 3x @ 50ms, hold bottle clamp until ACK</text>
-  <text x="560" y="590" class="text-code" fill="#a16207">Protocol: Strict Modbus/TCP register parity, deterministic cycle</text>
+  <text x="560" y="512" class="text-sub">- Port 1502. FC16 writes registers 100-103</text>
+  <text x="560" y="530" class="text-sub">- Accepted counts are read at addresses 14 and 24</text>
+  <text x="560" y="548" class="text-sub">- First ASSEMBLY_DONE of plc_retry: close before the response</text>
+  <text x="560" y="566" class="text-sub">- Poll register 1, then resend the same sequence and payload</text>
+  <text x="560" y="590" class="text-code" fill="#a16207">Status 2 duplicate. Accepted count is unchanged</text>
 </svg>

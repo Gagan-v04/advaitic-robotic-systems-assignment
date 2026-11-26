@@ -31,7 +31,7 @@
 
   <rect x="40" y="70" width="300" height="50" class="card" />
   <text x="55" y="92" class="label-title">Conveyor A &amp; B (Belts)</text>
-  <text x="55" y="108" class="label-sub">v = 30-35 mm/s, pitch = 450 mm, Z = 0.75m</text>
+  <text x="55" y="108" class="label-sub">Spec 25-35 mm/s. Seeds 0-2 are 33.2-33.4 mm/s</text>
 
   <rect x="40" y="130" width="300" height="50" class="card" />
   <text x="55" y="152" class="label-title">Kit Feeder (Station A &amp; B)</text>
@@ -49,7 +49,7 @@
 
   <rect x="40" y="335" width="300" height="55" class="card-red" />
   <text x="55" y="356" class="label-title">Human Intruder Zone</text>
-  <text x="55" y="373" class="label-sub">Scripted worker walking aisle (duration 2-4s)</text>
+  <text x="55" y="373" class="label-sub">Scripted mocap path through the aisle (2-4 s)</text>
 
   <!-- Container 2: Autonomous Mobile Robot -->
   <rect x="410" y="20" width="370" height="390" rx="10" class="box-robot" />
@@ -60,22 +60,22 @@
   <text x="445" y="108" class="label-sub">Sequential station targets, dock logic, kit lifecycle</text>
 
   <rect x="430" y="130" width="330" height="50" class="card" />
-  <text x="445" y="152" class="label-title">Differential Drive AMR Tracker</text>
-  <text x="445" y="168" class="label-sub">Dock pose tracking within 25mm / 2 deg tolerance</text>
+  <text x="445" y="152" class="label-title">Unicycle tracker on planar joints</text>
+  <text x="445" y="168" class="label-sub">Dock from the estimate: 22 mm and 0.030 rad</text>
 
   <rect x="430" y="190" width="330" height="55" class="card" />
-  <text x="445" y="212" class="label-title">6-DOF Manipulator &amp; Cartesian Servo</text>
-  <text x="445" y="228" class="label-sub">Min-jerk chord blending, conveyor speed feedforward</text>
+  <text x="445" y="212" class="label-title">7-joint arm and Cartesian servo</text>
+  <text x="445" y="228" class="label-sub">DLS damping 0.04. Joint-space min-jerk blend</text>
   <text x="445" y="242" class="label-sub">Inverse kinematics with joint range bounds</text>
 
   <rect x="430" y="255" width="330" height="65" class="card-accent" />
   <text x="445" y="277" class="label-title">Parallel Gripper &amp; Equality Weld Manager</text>
   <text x="445" y="293" class="label-sub">Equality constraint frozen at grasp; zero snap</text>
-  <text x="445" y="307" class="label-sub">Release only with finger gap &gt; 90mm (no cocking)</text>
+  <text x="445" y="307" class="label-sub">Release when gap &gt; 90 mm and the seat gates pass</text>
 
   <rect x="430" y="330" width="330" height="60" class="card-red" />
   <text x="445" y="352" class="label-title">Safety Lidar (64 Rays) &amp; Estimator</text>
-  <text x="445" y="368" class="label-sub">Aisle intrusion monitor, depth correction, arm freeze</text>
+  <text x="445" y="368" class="label-sub">64 human rays, 5x5 wrist rays, qpos hold</text>
 
   <!-- Container 3: Hardware & Sim Runtime -->
   <rect x="830" y="20" width="330" height="390" rx="10" class="box-hw" />
@@ -83,24 +83,24 @@
 
   <rect x="850" y="70" width="290" height="65" class="card" />
   <text x="865" y="92" class="label-title">MuJoCo 3.8.1 Physics Core</text>
-  <text x="865" y="108" class="label-sub">Newton solver, dt = 4ms (250 Hz step)</text>
-  <text x="865" y="122" class="label-sub">Zero belt penetration / contact check</text>
+  <text x="865" y="108" class="label-sub">implicitfast, dt = 0.004 s</text>
+  <text x="865" y="122" class="label-sub">belt_contacts counted; committed logs are 0</text>
 
   <rect x="850" y="145" width="290" height="65" class="card-accent" />
-  <text x="865" y="167" class="label-title">OSMesa AVX2 CPU SIMD Renderer</text>
-  <text x="865" y="183" class="label-sub">LLVMpipe in-memory rasterization</text>
-  <text x="865" y="197" class="label-sub">43 ms/frame (25x faster than WSL2 D3D12)</text>
+  <text x="865" y="167" class="label-title">Offscreen renderer</text>
+  <text x="865" y="183" class="label-sub">MUJOCO_GL selects egl or osmesa</text>
+  <text x="865" y="197" class="label-sub">Used when MUJOCO_GL=osmesa. No fixed frame time</text>
 
   <rect x="850" y="220" width="290" height="70" class="card-accent" />
-  <text x="865" y="242" class="label-title">NVIDIA RTX 5050 NVENC Video Engine</text>
-  <text x="865" y="258" class="label-sub">h264_nvenc hardware offload, zero CPU load</text>
-  <text x="865" y="272" class="label-sub">Native 1080p @ 30 fps in ~4.8 minutes</text>
+  <text x="865" y="242" class="label-title">ffmpeg encoder selection</text>
+  <text x="865" y="258" class="label-sub">h264_nvenc if ffmpeg lists it, else libx264</text>
+  <text x="865" y="272" class="label-sub">1920x1080 raw RGB into ffmpeg</text>
 
   <rect x="850" y="300" width="290" height="90" class="card" />
   <text x="865" y="322" class="label-title">Evidence &amp; Verification Bridge</text>
   <text x="865" y="338" class="label-sub">physics systems-check (Modbus trace audit)</text>
   <text x="865" y="352" class="label-sub">physics cell-eval (seating, contacts, time)</text>
-  <text x="865" y="366" class="label-sub">Result: 10/10 Accepted, 0 Violations</text>
+  <text x="865" y="366" class="label-sub">Committed logs: 10 accepted in each run</text>
 
   <!-- Connectors -->
   <path d="M 430 95 L 350 280" class="arrow-green" />

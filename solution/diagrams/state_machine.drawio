@@ -10,33 +10,33 @@
         <mxCell id="nav_a" value="NAVIGATE STATION A&#xa;Trajectory tracking to Dock A&#xa;(3.0m, 2.0m, -pi/2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="220" y="80" width="160" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="dock_a" value="DOCK STATION A&#xa;Align base pose residual&#xa;&lt; 25mm / 2 deg tolerance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+        <mxCell id="dock_a" value="DOCK STATION A&#xa;Estimate within 22 mm and 0.030 rad&#xa;Measured base speed &lt;= 8 mm/s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="420" y="80" width="160" height="70" as="geometry" />
         </mxCell>
         <mxCell id="work_a" value="WORK CELL STATION A&#xa;Assemble incoming kits 101-105&#xa;Monitor downstream inspection&#xa;Loop until 5 ACCEPTED" style="swimlane;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="620" y="30" width="340" height="170" as="geometry" />
         </mxCell>
-        <mxCell id="hand_loop" value="Hand Sequence per Kit:&#xa;Hover -&gt; Descend -&gt; Close -&gt; Weld -&gt; Lift -&gt;&#xa;Carry (velocity feedforward) -&gt; Lower on Flange -&gt;&#xa;Settle -&gt; Open Fingers (&gt;90mm) -&gt; Release Weld -&gt;&#xa;Vertical Retreat -&gt; Emit ASSEMBLY_DONE" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="work_a">
+        <mxCell id="hand_loop" value="Hand sequence per kit:&#xa;Hover -&gt; Descend -&gt; Close (weld) -&gt; Lift -&gt;&#xa;Carry at a fixed column (80 ms lead) -&gt; Lower -&gt;&#xa;Settle -&gt; Open (release when gap &gt; 90 mm) -&gt;&#xa;Retreat -&gt; ASSEMBLY_DONE" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="work_a">
           <mxGeometry x="15" y="35" width="310" height="120" as="geometry" />
         </mxCell>
 
-        <mxCell id="stow_a" value="STOW ARM AT A&#xa;Tuck 6 joints to safe angles&#xa;Zero base velocity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+        <mxCell id="stow_a" value="STOW ARM AT A&#xa;Seven arm joints to the zero pose&#xa;Then plan to dock B" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="1000" y="80" width="150" height="70" as="geometry" />
         </mxCell>
         <mxCell id="nav_b" value="NAVIGATE STATION B&#xa;Transit aisle to Dock B&#xa;(3.0m, 4.0m, +pi/2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="1000" y="260" width="150" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="dock_b" value="DOCK STATION B&#xa;Align base pose residual&#xa;Send READY station 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+        <mxCell id="dock_b" value="DOCK STATION B&#xa;Same 22 mm / 0.030 rad test&#xa;READY after preposition" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="800" y="260" width="160" height="70" as="geometry" />
         </mxCell>
         <mxCell id="work_b" value="WORK CELL STATION B&#xa;Assemble incoming kits 201-205&#xa;Loop until 5 ACCEPTED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="580" y="260" width="180" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="mission_done" value="MISSION COMPLETE&#xa;10/10 Accepted Assemblies&#xa;0 Violations, Sim &lt; 224s" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="mission_done" value="MISSION COMPLETE&#xa;5 accepts at B, then stow&#xa;Committed nominal 223.5-249.0 s" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="360" y="260" width="180" height="70" as="geometry" />
         </mxCell>
 
-        <mxCell id="human_stop" value="SAFETY SUPERVISOR (HUMAN STOP)&#xa;64-ray lidar detects human in aisle (&lt; 1m)&#xa;Hold joints, drop grasp, keep conveyor moving&#xa;Explicit resume 0.2s after aisle clear" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="human_stop" value="HUMAN STOP (work phase, job active)&#xa;64 rays: human* within 1.0 m or in the aisle box&#xa;Restore qpos after each step; drop weld if held&#xa;5 misses and 2.0 s, then resume +0.2 s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="240" width="280" height="110" as="geometry" />
         </mxCell>
 

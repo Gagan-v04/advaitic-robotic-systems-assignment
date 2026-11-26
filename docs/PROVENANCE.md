@@ -14,7 +14,7 @@ The mobile manipulator is the Google Robot from MuJoCo Menagerie.
 - Licence: Apache-2.0, copied at `third_party/mujoco_menagerie/google_robot/LICENSE`
 - Recorded in `third_party/mujoco_menagerie/PINNED_COMMIT.txt`
 
-The cell scene is generated next to that model at runtime and is gitignored. Visual meshes keep their Menagerie files. Collision meshes on the arm links (torso through gripper) keep zero density and are put back in contact against the kit plate only (contact bit 8). Finger capsules still meet the ring. Base collision STLs stay out of the graph; the cell adds its own hull. A 55 kg base inertia replaces the mesh-density mass that otherwise made the chassis immovable.
+The cell scene is generated next to that model at runtime and is gitignored. Visual meshes keep their Menagerie files. Arm-link collision meshes are rewritten to density 0 and `contype`/`conaffinity` 0. `ARM_KIT_BIT` (bit 8) is reserved on the kit geoms for a later convex proxy; those arm meshes stay out of contact. Finger capsules that are not visual group 2 get `contype` and `conaffinity` 6 so they meet the ring. Base collision STLs stay out of the graph; the cell adds its own hull. A 55 kg base inertia replaces the mesh-density mass that otherwise made the chassis immovable.
 
 ## Worker mesh
 
