@@ -7,7 +7,7 @@
         <mxCell id="box_plant" value="Physical Plant / Customer Digital Twin" style="swimlane;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;" vertex="1" parent="1">
           <mxGeometry x="40" y="40" width="320" height="360" as="geometry" />
         </mxCell>
-        <mxCell id="belt_a" value="Conveyor A (Yaw 0, +X travel)&#xa;v = 30-35 mm/s, Top Z = 0.75m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
+        <mxCell id="belt_a" value="Conveyor A (yaw 0, +X travel)&#xa;Spec 25-35 mm/s. Seeds 0-2 are 33.2-33.4 mm/s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
           <mxGeometry x="20" y="40" width="280" height="50" as="geometry" />
         </mxCell>
         <mxCell id="feeder" value="Kit Feeder (Bottle + Rigid Ring)&#xa;Pitch = 450 mm, Arrival X = -300 mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
@@ -19,7 +19,7 @@
         <mxCell id="plc_srv" value="Modbus/TCP Line Controller (Port 1502)&#xa;FC03 Read Accepts / FC16 Write Ready/Done&#xa;Idempotent Sequence Numbers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="box_plant">
           <mxGeometry x="20" y="250" width="280" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="belt_b" value="Conveyor B (Yaw pi, -X travel)&#xa;v = 30-35 mm/s, Top Z = 0.75m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
+        <mxCell id="belt_b" value="Conveyor B (yaw pi, -X travel)&#xa;Same speed. Silent until A has 5 accepts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="box_plant">
           <mxGeometry x="20" y="320" width="280" height="30" as="geometry" />
         </mxCell>
 
@@ -29,32 +29,32 @@
         <mxCell id="state_mach" value="Mission Executive &amp; State Machine&#xa;Station Goals, Dock Sequencing, Fault Supervisor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="box_robot">
           <mxGeometry x="20" y="40" width="320" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="nav_ctl" value="Navigation &amp; Diff-Drive AMR Controller&#xa;Waypoint tracking, Docking &lt;= 25mm / 2 deg tolerance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="box_robot">
+        <mxCell id="nav_ctl" value="A* plus unicycle tracker on planar joints&#xa;Dock from the estimate: 22 mm and 0.030 rad" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="box_robot">
           <mxGeometry x="20" y="100" width="320" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="arm_ctl" value="6-DOF Arm Kinematics &amp; Cartesian Servo&#xa;Min-jerk chord blending, Velocity feedforward, Nullspace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="box_robot">
+        <mxCell id="arm_ctl" value="7-joint arm, DLS damping 0.04&#xa;Joint-space min-jerk between IK solutions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;" vertex="1" parent="box_robot">
           <mxGeometry x="20" y="160" width="320" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="gripper_mgr" value="Parallel Gripper &amp; Equality Weld Manager&#xa;Radial tolerance &lt; 2.2mm, Finger gap clearance &gt; 90mm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="box_robot">
+        <mxCell id="gripper_mgr" value="Weld while jaws open&#xa;Release when gap &gt; 90 mm and seat gates pass" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="box_robot">
           <mxGeometry x="20" y="225" width="320" height="50" as="geometry" />
         </mxCell>
         <mxCell id="safety_lidar" value="Perception &amp; Safety Lidar (64 Rays)&#xa;Intrusion bounding boxes, conveyor encoders, depth rays" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="box_robot">
           <mxGeometry x="20" y="290" width="320" height="50" as="geometry" />
         </mxCell>
 
-        <mxCell id="box_hardware" value="High-Performance Accelerated Runtime (WSL2 + NVIDIA RTX 5050)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+        <mxCell id="box_hardware" value="Physics step and optional video" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=14;" vertex="1" parent="1">
           <mxGeometry x="840" y="40" width="320" height="360" as="geometry" />
         </mxCell>
-        <mxCell id="sim_engine" value="MuJoCo 3.8.1 Physics Engine&#xa;Newton solver, dt = 4ms (250 Hz lockstep)&#xa;Deterministic contacts &amp; friction models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="box_hardware">
+        <mxCell id="sim_engine" value="MuJoCo 3.8.1&#xa;implicitfast, dt = 0.004 s&#xa;One process with the plant and the robot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="box_hardware">
           <mxGeometry x="20" y="45" width="280" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="osmesa_render" value="OSMesa CPU SIMD Vectorized Renderer&#xa;Multi-core AVX2 LLVMpipe, in-memory framebuffers&#xa;43 ms/frame (25x faster than WSL2 D3D12)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="box_hardware">
+        <mxCell id="osmesa_render" value="Offscreen renderer when --video is set&#xa;MUJOCO_GL=osmesa on the physics helper path&#xa;1920x1080 raw RGB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="box_hardware">
           <mxGeometry x="20" y="120" width="280" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="nvenc_gpu" value="NVIDIA RTX 5050 Laptop GPU NVENC&#xa;Hardware H.264 Encoder (h264_nvenc)&#xa;Native 1080p @ 30 fps, 0% CPU encoding overhead" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="box_hardware">
+        <mxCell id="nvenc_gpu" value="ffmpeg&#xa;h264_nvenc if the encoder is listed&#xa;otherwise libx264 ultrafast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="box_hardware">
           <mxGeometry x="20" y="200" width="280" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="eval_bridge" value="Verification &amp; Evidence Checker&#xa;`physics systems-check` &amp; `physics cell-eval`&#xa;100% contract compliance verification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="box_hardware">
+        <mxCell id="eval_bridge" value="systems-check and cell-eval&#xa;On the committed logs&#xa;CI does not run a mission" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="box_hardware">
           <mxGeometry x="20" y="280" width="280" height="60" as="geometry" />
         </mxCell>
 

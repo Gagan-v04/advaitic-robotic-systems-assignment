@@ -1,179 +1,127 @@
 # Advaitic — Robotic Systems Autonomous Packaging Cell
 
-An industrial-grade, fully autonomous mobile manipulation solution for dual-station moving assembly lines. Developed for the Advaitic Robotic Systems technical challenge.
+Simulated cell: one Google Robot on a planar mobile base seats ten collar rings on two moving conveyors. The plant measures seating. The robot reports `ASSEMBLY_DONE` and never writes the accepted count.
 
-[![Status](https://img.shields.io/badge/Mission_Scorecard-10%2F10_Accepted-success)](results/nominal-seed-0/summary.json)
-[![Violations](https://img.shields.io/badge/Safety_Violations-0-brightgreen)](results/nominal-seed-0/summary.json)
-[![Tests](https://img.shields.io/badge/Unit_Tests-47%2F47_Passed-success)](tests/)
-[![Simulation](https://img.shields.io/badge/MuJoCo-3.8.1_Deterministic-blue)](https://mujoco.readthedocs.io/)
-[![Hardware](https://img.shields.io/badge/GPU_Acceleration-RTX_5050_NVENC-76b900)](solution/LLD.md#3-hardware-acceleration--video-encoding-pipeline)
+The committed logs under `results/` are the runs that were checked in. They are not a claim that every machine reproduces those times. See [Known limitations](#7-known-limitations).
 
----
+## 1. What the code does
 
-## 1. System Architecture Overview
+One process steps the plant, the robot, and MuJoCo together at `dt = 0.004` s (`integrator="implicitfast"`). A Modbus/TCP test double (`PLCServer`) listens on `127.0.0.1:1502`.
 
-The system controls the Google Robot on a differential-drive mobile base equipped with a 2-finger parallel-jaw gripper operating across two asynchronous packaging stations. The mission requires assembling 10 tamper-evident collar rings onto continuously moving bottles (5 at Station 1, 5 at Station 2) within strict radial, tilt, and timing tolerances.
+| Piece | Module | Role |
+|---|---|---|
+| Plant | `plant.py`, `feeder.py`, `frames.py` | Kinematic kits, `seat_verified`, inspection at local x = +0.55 m |
+| Mission | `mission.py` | Navigate, dock, hand state machine, PLC commands |
+| Arm | `arm.py`, `motion.py` | 7-joint damped least squares, joint-space min-jerk blend |
+| Base | `navigate.py`, `scene.py` | A* on a 5 cm map; unicycle tracker on planar slide/yaw joints |
+| Sensing | `perception.py` | Odometry, 8-ray scan match, 4 wall ranges, 5×5 wrist rays, 64 human rays |
+| PLC | `plc_adapter.py` | Sequence advances only after an acknowledgement |
 
-### 1.1 Embedded Architecture Flowchart
+Customer requirements stay in `docs/CUSTOMER_PACKET.md`, `docs/ACCEPTANCE.md`, and `docs/INTERFACES.md`. This repository's design notes are `docs/SOLUTION.md`, `solution/HLD.md`, `solution/LLD.md`, and `solution/CONSTRAINTS.md`.
 
 ```mermaid
-flowchart TB
-    subgraph CellSupervision["Mission Executive & Supervision"]
-        FSM["Mission State Machine\n(cell_logic.py)"]
-        Planner["Pick & Place Planner\n(9-Stage Deterministic FSM)"]
-        FSM --> Planner
-    end
-
-    subgraph MotionControl["Motion & Trajectory Control"]
-        TrajGen["Min-Jerk Trajectory Generator\n(5th-order Polynomial Blend)"]
-        IK["Differential Inverse Kinematics\n(Damped Least-Squares SVD)"]
-        BaseServo["Diff-Drive Navigation & Alignment Tracker\n(Pure Pursuit & Dock Creep)"]
-        Planner --> TrajGen
-        TrajGen --> IK
-        Planner --> BaseServo
-    end
-
-    subgraph SafetyAndComms["Safety & Industrial Protocol"]
-        LidarSafety["64-Ray LiDAR Safety Observer\n(Speed Governor & Collision Shield)"]
-        ModbusClient["Modbus/TCP Client\n(Deterministic Register Read/Write)"]
-        LidarSafety -.->|Override / Halt| MotionControl
-        ModbusClient <-->|Station Handshake| FSM
-    end
-
-    subgraph HardwarePlant["Simulation Plant & Acceleration"]
-        MuJoCo["MuJoCo Multi-Body Physics Plant\n(dt = 0.002s / 500 Hz RK4)"]
-        OSMesa["OSMesa Vectorized Offscreen Rasterizer\n(43.1 ms/frame)"]
-        NVENC["NVIDIA RTX 5050 NVENC ASIC\n(1080p @ 30 fps Broadcast Stream)"]
-        BaseServo --> MuJoCo
-        IK --> MuJoCo
-        MuJoCo --> OSMesa
-        OSMesa --> NVENC
-    end
+flowchart LR
+  subgraph Plant["Plant"]
+    FE[Feeder] --> KIT[Mocap kits]
+    KIT --> MEAS[Measurement]
+    MEAS --> PLC[(PLCServer :1502)]
+  end
+  subgraph Robot["mission.py"]
+    EST[Estimator] --> NAV[A* and tracker]
+    SM[Hand states] --> ARM[ArmController]
+    RP[RobotPLC]
+  end
+  PLC --> RP
+  RP --> PLC
+  NAV --> SIM[(mj_step dt=0.004)]
+  ARM --> SIM
+  SIM --> MEAS
+  SIM --> EST
 ```
 
-### 1.2 Graphical Architecture Vector Diagram
+Docks in `spec/customer_cell.json` are A `(3.0, 2.0, −π/2)` and B `(3.0, 4.0, +π/2)`. The tracker aims station B 8 mm further in +y. Dock is declared from the pose estimate: within 22 mm and 0.030 rad of the spec dock, and measured base speed at most 8 mm/s.
 
-![System Architecture](solution/diagrams/system_architecture.svg)
-*Source Draw.io XML: [solution/diagrams/system_architecture.drawio](solution/diagrams/system_architecture.drawio)*
+`READY` is sent after that dock, once the open hand is pre-positioned (`hand_err` ≤ 0.08 m). `_maybe_line_ready` does not send a command. Station B does not release kits until station A has five accepts.
 
----
+## 2. Committed logs
 
-## 2. Mission Performance & Verification Scorecard
+Times below are the committed `summary.json` / `events.jsonl` values, rounded. Cycle time is `seat_verified.t − kit_arrived.t`.
 
-All scenarios were evaluated using the authoritative `systems-check` and `cell-eval` validation harnesses.
+| Run | Sim time | Wall time | Accepted | Slowest accepted cycle | Rejected kits |
+|---|---:|---:|---:|---:|---|
+| nominal seed 0 | 223.50 s | 154.54 s | 10 / 10 | 11.980 s | none |
+| nominal seed 1 | 249.00 s | 145.92 s | 10 / 10 | 10.208 s | 203, 205 |
+| nominal seed 2 | 223.80 s | 134.82 s | 10 / 10 | 9.988 s | none |
+| human stop seed 0 | 319.44 s | 339.25 s | 10 / 10 | 9.228 s | 101 (abandoned), 102, 104, 107, 108, 109, 204 |
+| PLC retry seed 0 | 223.50 s | 166.91 s | 10 / 10 | 11.980 s | none |
 
-| Evaluation Metric | Customer Requirement | Achieved Result | Margin / Status |
-| :--- | :--- | :--- | :--- |
-| **Kits Accepted (Station 1)** | 5 of 5 accepted | **5 / 5 (100%)** | 5 accepted / 5 target |
-| **Kits Accepted (Station 2)** | 5 of 5 accepted | **5 / 5 (100%)** | 5 accepted / 5 target |
-| **Total Accepted Assemblies** | 10 kits accepted | **10 / 10 (100%)** | **10 / 10 accepted across stations** |
-| **Radial Concentricity Error**| $\le 4.0\text{ mm}$ | **$3.03\text{ mm} - 3.28\text{ mm}$ (mean $\approx 3.2\text{ mm}$)** | **$\approx 0.8\text{ mm}$ margin under max tolerance** |
-| **Ring Seating Tilt Angle** | $\le 10.0^\circ$ ($0.1745\text{ rad}$) | **$0.0003 - 0.054\text{ rad}$ ($0.02^\circ - 3.1^\circ$)** | **Well within $10.0^\circ$ limit; $< 0.001\text{ rad}$ at inspection** |
-| **Assembly Cycle Duration** | $\le 12.0\text{ s}$ per kit | **$7.7\text{ s} - 12.0\text{ s}$** | **Slowest accepted cycle $11.980\text{ s}$ ($20\text{ ms}$ under cap; 4 cycles at $11.6 - 12.0\text{ s}$)** |
-| **Nominal Mission Time** | $\le 270.0\text{ s}$ sim time | **$223.50\text{ s} - 249.00\text{ s}$** | **$21.0\text{ s} - 46.5\text{ s}$ under budget across all seeds** |
-| **Human Obstacle Mission Time** | $\le 360.0\text{ s}$ sim time | **$319.44\text{ s}$** | **$40.56\text{ s}$ under budget** |
-| **Safety Violations (Human)** | 0 collisions, 0 speed violations | **0 collisions, 0 violations** | Clean 200 ms stop & resume |
-| **Modbus PLC Retry Handling** | Recover without duplicate counts | **10 / 10 accepted** | Clean idempotent retry |
-| **Pytest Unit Test Suite** | 100% passing | **47 / 47 passed** | 17.33 s execution |
+On those logs, `seat_verified` radial error is 3.05–3.28 mm and tilt is 0.0002–0.054 rad. `belt_contacts` is 0. `trace.json` has `oracle: false`. Nominal and fault missions in the table finish under 270 s and 360 s. Seed 0 and the PLC-retry log each have four accepted cycles between 11.588 s and 11.980 s.
 
----
+Grasp distances recorded in the five `summary.json` files span −9.44 mm to +2.43 mm. A positive value means the finger and ring geoms were not overlapping when the weld engaged.
 
-## 3. Engineering Documentation & Solution Architecture
+## 3. Documents and figures
 
-Detailed engineering design documentation and editable vector diagrams are maintained in [`solution/`](solution/) and [`docs/`](docs/):
+- [docs/SOLUTION.md](docs/SOLUTION.md) — controller behaviour, committed metrics, assumptions, limitations
+- [solution/HLD.md](solution/HLD.md) — modules, states, Modbus map, human stop
+- [solution/LLD.md](solution/LLD.md) — IK, hand thresholds, navigation, video path
+- [solution/CONSTRAINTS.md](solution/CONSTRAINTS.md) — limits that the code and the spec actually use
+- [docs/PROVENANCE.md](docs/PROVENANCE.md) — starter package and vendored meshes
+- `solution/diagrams/` — architecture, state machine, hand sequence, video path
+- `solution/perception/` — offline RGB, segmentation, and depth frames from `scripts/capture_perception_evidence.py`. The live controller does not consume those images. It uses the rays in `perception.py`.
 
-- **[Solution Summary (docs/SOLUTION.md)](docs/SOLUTION.md)**: Full run metrics, cycle timings, sensor configurations, and Aryan Q&A assumptions.
-- **[High-Level Design (HLD.md)](solution/HLD.md)**: System context, component decomposition, Modbus/TCP register memory map, and operational state transitions.
-- **[Low-Level Design (LLD.md)](solution/LLD.md)**: Kinematics, damped least-squares Jacobian servoing, 5th-order min-jerk trajectory blending, the 9-stage assembly lifecycle, and WSL2 hardware acceleration.
-- **[Constraints & Edge-Cases (CONSTRAINTS.md)](solution/CONSTRAINTS.md)**: Exact dimensions, feeder hopper clearances, velocity/acceleration envelopes, timing budgets, and safety recovery rules.
-- **[Perception Evidence & Sensor Views (solution/perception/)](solution/perception/)**: Captured RGB views, semantic segmentation masks, metric depth maps, and localized 3D LiDAR/wrist raycast points.
-- **[Draw.io Source Diagrams](solution/diagrams/)**: Editable XML diagrams (`.drawio`) and standalone rendered vector graphics (`.svg`):
-  - [System Architecture](solution/diagrams/system_architecture.svg) (`system_architecture.drawio`)
-  - [State Machine](solution/diagrams/state_machine.svg) (`state_machine.drawio`)
-  - [Pick & Place Pipeline](solution/diagrams/pick_and_place_pipeline.svg) (`pick_and_place_pipeline.drawio`)
-  - [Hardware Acceleration](solution/diagrams/hardware_acceleration.svg) (`hardware_acceleration.drawio`)
+## 4. How to run
 
-### 3.1 Agreed Assumptions
+Portable path, from a checkout with `uv` and the committed `uv.lock`:
 
-Per the technical clarifications documented in [`docs/SOLUTION.md`](docs/SOLUTION.md):
-
-1. **Feeder and READY**: Kits may be released close to the work-entry line; the feeder already spawns about 0.20 s (a few millimetres) before the crossing. READY for a station may be sent while the AMR is still travelling, timed so the first kit is near entry as docking finishes. Station B is never READYed until Station A has five accepted kits in the PLC.
-2. **Process Split**: The robot controller is a set of modules (`Mission`, `ArmController`, `CartesianServo`, `Estimator`) in the same lockstep `mj_step` process as the plant simulation without a secondary OS process.
-3. **Dock Offset**: A small recorded offset is permitted if required by reach. Spec docks already reach, so station goals remain unchanged. `trace.json` records the measured residual, bounded within the checker's 25 mm / 2° dock event window.
-4. **Human-Stop Resume**: After the 64-beam LiDAR reports the human worker cleared (and after the 2.0 s minimum duration has elapsed), a scripted operator acknowledgement writes `resume` 0.2 s later as the explicit recovery edge in a headless run.
-5. **Interrupted Grasp**: If a kit in hand must be rejected during an interruption, the bilateral grasp constraint is released and jaws open so the ring falls where it is. The robot does not carry that ring to the next station or stash it off-stage.
-
----
-
-## 4. Canonical Full-Run Results Directory
-
-Per submission requirements, all 5 canonical simulation runs are tracked and committed with their respective event logs, metrics, telemetry, and hold verifications:
-
-1. **[`results/nominal-seed-0/`](results/nominal-seed-0/)** — Nominal seed 0 (223.50 s sim time, 10/10 accepted, 0 violations, includes full 1080p @ 30 fps mission video and camera views)
-2. **[`results/nominal-seed-1/`](results/nominal-seed-1/)** — Nominal seed 1 (249.00 s sim time, 10/10 accepted, 0 violations)
-3. **[`results/nominal-seed-2/`](results/nominal-seed-2/)** — Nominal seed 2 (223.80 s sim time, 10/10 accepted, 0 violations)
-4. **[`results/human-stop/`](results/human-stop/)** — Human stop safety scenario (319.44 s sim time, 10/10 accepted, 0 collisions, 0 violations, includes human stop video demonstration [human-stop.mp4](results/human-stop/human-stop.mp4))
-5. **[`results/plc-retry/`](results/plc-retry/)** — Modbus PLC socket disconnect and retry scenario (223.50 s sim time, 10/10 accepted, 0 duplicate counts, 0 violations)
-
-Each folder contains:
-- `events.jsonl` — Full event log validated by `systems-check` and `cell-eval`
-- `summary.json` — Run summary metrics (`sim_time_s`, `wall_time_s`, `events`, `belt_contacts`, `min_clearance_m`, `abandoned`, `grasps`)
-- `trace.json` — Real-time telemetry, joint positions, velocities, and tracking errors
-- `holds.json` — Seating verification samples showing verified radial errors, height, and tilt
-
----
-
-## 5. Quickstart & Execution
-
-### 5.1 Environment
-The simulation runs inside **Ubuntu-24.04 on WSL2** (or native Linux) using the pre-configured Python environment at `/opt/ars-venv`.
-
-### 5.2 Single-Command Verification (PowerShell from Windows Host)
-
-Run unit tests and linter:
-```powershell
-powershell -File scripts/run_gpu.ps1 pytest -q
-powershell -File scripts/run_gpu.ps1 ruff check .
+```sh
+uv sync --locked --group dev --group physics
+uv run pytest -q
+uv run ruff check .
+uv run systems-timing
+uv run python -m advaitic_systems.parts
+uv run cell-run --scenario nominal --seed 0 --headless --no-record
+uv run cell-eval results/nominal-seed-0/events.jsonl --scenario nominal
+uv run cell-run --scenario human_stop --seed 0 --headless --no-record --duration 3 --interrupt-at transfer
+uv run cell-eval results/human-stop/events.jsonl --scenario human_stop
+uv run cell-run --scenario plc_retry --seed 0 --headless --no-record
+uv run cell-eval results/plc-retry/events.jsonl --scenario plc_retry
 ```
 
-Run nominal mission evaluation:
-```powershell
-powershell -File scripts/run_gpu.ps1 --% physics cell-run --scenario nominal --seed 0 --headless --no-record
-powershell -File scripts/run_gpu.ps1 --% physics cell-eval results/nominal-seed-0/events.jsonl --scenario nominal
+`--interrupt-at` accepts only `transfer`. Video needs `ffmpeg`. When `ffmpeg -encoders` lists `h264_nvenc`, the writer uses it; otherwise it uses `libx264`. Frames are 1920×1080 raw RGB.
+
+```sh
+uv run cell-run --scenario nominal --seed 0 --headless --fps 30 \
+  --video results/demo/full-mission.mp4 --out results/nominal-seed-0
 ```
 
-Run human-stop safety scenario evaluation:
-```powershell
-powershell -File scripts/run_gpu.ps1 --% physics cell-run --scenario human_stop --seed 0 --headless --no-record --duration 3 --interrupt-at transfer
-powershell -File scripts/run_gpu.ps1 --% physics cell-eval results/human-stop/events.jsonl --scenario human_stop
-```
+On Windows, `scripts/run_gpu.ps1` starts Ubuntu-24.04 under WSL and `scripts/run_gpu.sh`, which expects Python at `/opt/ars-venv`. A launch with no command runs `scripts/probe_gpu_render.py`, and that file is not in the repository. CI (`.github/workflows/checks.yml`) runs the locked sync, ruff, pytest, `systems-timing`, and `advaitic_systems.parts`. It does not run a mission.
 
-Run Modbus PLC retry scenario evaluation:
-```powershell
-powershell -File scripts/run_gpu.ps1 --% physics cell-run --scenario plc_retry --seed 0 --headless --no-record
-powershell -File scripts/run_gpu.ps1 --% physics cell-eval results/plc-retry/events.jsonl --scenario plc_retry
-```
+The test suite is 47 cases in `tests/`.
 
-Generate 1080p @ 30 fps hardware-accelerated video:
-```powershell
-powershell -File scripts/run_gpu.ps1 --% cell-run --scenario nominal --seed 0 --headless --fps 30 --video results/demo/full-mission.mp4 --out results/nominal-seed-0
-```
+## 5. Sensing used by the controller
 
----
+Pick (`hover`, `descend`, `close`) aims with the conveyor encoder (±0.2% scale) and a 5×5 downward ray ROI, then clamps that point to ±5 mm of the encoder prediction.
 
-## 6. Key Engineering Innovations
+From `carry` onward, bottle motion comes from the plant carrier's arrival time and belt speed. Seat checks, place trim, and the place target read the ring body's simulator pose (`data.xpos`). Weld selection calls `Plant.closest_ring()`, which uses `mj_geomDistance`. Scored runs leave `--oracle-perception` off; that flag is a separate debug path. The placement reads above still use plant state when the flag is off.
 
-1. **Dual-Stage Release & Upright Seating Alignment**:
-   Eliminated gripper-induced collar cocking ($tilt \approx 33^\circ$) by delaying vertical arm retreat until finger clearance $> 125\text{ mm}$ is confirmed by joint encoder feedback, ensuring seating radial error measures $3.03 - 3.28\text{ mm}$ (mean $\approx 3.2\text{ mm}$, well within the $4.0\text{ mm}$ tolerance) and tilt remains between $0.0003\text{ rad}$ and $0.054\text{ rad}$ ($< 3.1^\circ$, well within the $10.0^\circ$ tolerance), which settles to $< 0.001\text{ rad}$ ($< 0.06^\circ$) at downstream inspection.
-2. **Quintic Min-Jerk Chord Blending**:
-   Eliminated trajectory jerk and dynamic sway during high-speed feeder-to-conveyor transfers, reducing transit cycle time while protecting delicate payload alignment.
-3. **OSMesa + RTX 5050 NVENC Rendering Engine**:
-   Bypassed the synchronous `/dev/dxg` hypervisor fence stall ($1,108\text{ ms/frame}$) by coupling AVX2 vectorized CPU rasterization ($43.1\text{ ms/frame}$) directly with dedicated GPU hardware encoding (`h264_nvenc`), yielding a **25.7× rendering speedup**.
+Human rays are cast from `_work` when the scenario is `human_stop` and the scripted person has started. A stop starts only if a job is active. The rays originate at the base origin, z = 0.6 m. A geom whose name starts with `human` counts when the range is under 1.0 m, or when the hit lies in the station aisle rectangle.
 
----
+## 6. Grasp release
 
-## 7. License & Provenance
+The weld stays active while the jaws open. It is released when the fingertip gap exceeds 0.090 m and the ring is within the seat gates in `mission.py` (radial under 2.2 mm, height 128–142 mm above the kit top, ring-up cosine above 0.94). Timeout fallbacks at 2.2 s and 2.8 s use looser gates, and the 2.8 s path releases without those gates. Engage requires a closest-ring distance under 16 mm and a gap under 0.11 m, after the `close` state has held tool-down above 0.90 for at least 0.30 s.
 
-- Robot Model: Google Robot from [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) (pinned commit `98a70c569c4c1b6da467a20012f766ee1f8dc521`).
-- Starter code and test harnesses: Apache-2.0.
-- Solution architecture, control algorithms, and documentation: Copyright © 2026.
+## 7. Known limitations
+
+These are properties of this controller and of one independent re-run. No new sweep was added here.
+
+- Committed nominal seeds 0, 1, and 2 use belt speeds 0.033163, 0.033279, and 0.033395 m/s. The customer range is 0.025–0.035 m/s. On a separate Linux machine with MuJoCo 3.8.1 from `uv.lock`, seed 16 (25.015 mm/s) reached the 270 s cap with 6/10 accepted (7 seated, slowest seated cycle 12.31 s, kits 103, 104, and 202 rejected). Seed 102 (34.967 mm/s) reached the cap with 8/10 accepted (16 arrived, 9 seated).
+- That same re-run of nominal seed 0 matched station A and recorded 12.036 s for kit 201, which misses the 12 s cycle cap. The committed log has 11.980 s for that kit. Repeated runs are not bit-identical across machines.
+- Human detection does not run during navigation. The stop writes saved joint positions back after `mj_step`. `human_enter` and `stop_command` share one timestamp in the committed human-stop log (t = 35.928 s).
+- A lost-ack retry exists only for the first `ASSEMBLY_DONE` when the scenario is `plc_retry`. Other commands use one `PLCClient` request (2 s socket timeout) and no reconnect loop.
+- There is no full-mission test. CI does not run `cell-run`.
+
+## 8. Licence
+
+- Google Robot: MuJoCo Menagerie, commit `98a70c569c4c1b6da467a20012f766ee1f8dc521`, Apache-2.0.
+- Starter package `src/advaitic_systems/`: Apache-2.0.
+- Person mesh: Unitree G1 stand pose from the same pin, BSD-3. See `docs/PROVENANCE.md`.

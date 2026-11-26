@@ -1,128 +1,108 @@
-# High-Level Design (HLD): Autonomous Mobile Manipulator Assembly Cell
+# High-Level Design
 
-## 1. Executive Summary
+One mobile manipulator serves two conveyors in the 6×6 m cell from `spec/customer_cell.json`. The implementation is the package `src/advaitic_cell/`. The customer starter (`src/advaitic_systems/`, `spec/`, `docs/CUSTOMER_PACKET.md`, `docs/ACCEPTANCE.md`, `docs/INTERFACES.md`) is unchanged.
 
-The Advaitic Robotic Systems manufacturing cell is a fully autonomous dual-station packaging assembly environment. A mobile manipulator comprising a differential-drive mobile base, a 6-DoF serial arm, and a 2-finger parallel-jaw gripper must navigate between two distinct workcells, coordinate with station PLCs via Modbus/TCP, and seat 10 precision tamper-evident collar rings onto continuously moving bottles across two conveyor belts (5 rings at Station 1, 5 rings at Station 2).
+## 1. Runtime
 
-All operations must strictly satisfy sub-millimeter tolerances, physical clearance limits, dynamic timing budgets, safety supervisor standards, and Modbus/TCP communication protocols without any manual intervention.
+Robot, plant, and physics share one process and one 4 ms step:
 
----
+1. `Plant.drive` releases kits and moves the kinematic belts.
+2. `Mission._step_robot` navigates or runs the hand state machine.
+3. `mj_step` integrates with `implicitfast` at `dt = 0.004` s.
+4. `Plant.measure` updates the hold and, at local x = +0.55 m, calls the line controller's `inspect`.
 
-## 2. System Architecture
+`PLCServer` runs on a daemon thread. The robot talks to it with real TCP. The bind address is `127.0.0.1:1502`, or port 0 if 1502 is already taken.
 
-The software architecture is decoupled into three primary execution tiers:
-1. **Decision & Control Tier (Top)**: Mission Executive finite-state machine (FSM), Cartesian servoing, and min-jerk trajectory generators.
-2. **Safety & Communications Tier (Middle)**: Real-time 64-ray LiDAR obstacle observer and industrial Modbus/TCP client interface.
-3. **Physics & Actuation Tier (Bottom)**: 500 Hz MuJoCo multi-body dynamic simulation engine, offscreen sensor pipeline, and hardware-accelerated video rendering.
+The base is not a wheel model. `scene.py` adds two slide joints and one yaw hinge to the Google Robot and drives them with velocity actuators. `DiffDriveTracker` emits a forward speed and a yaw rate. Those are clipped to ±0.34 m/s and ±0.55 rad/s and written as world-frame slide commands using the estimated yaw. The arm must be at the stow pose (all seven arm joints within 0.22 rad of zero, and not deployed) before the base command is allowed to be nonzero.
 
-### 2.1 Embedded Architecture Diagram (Interactive Flowchart)
+The arm joints are `joint_torso`, `joint_shoulder`, `joint_bicep`, `joint_elbow`, `joint_forearm`, `joint_wrist`, and `joint_gripper`, plus two finger joints.
 
-```mermaid
-flowchart TB
-    subgraph CellSupervision["T1: Mission Executive & State Supervision"]
-        FSM["Mission State Machine\n(cell_logic.py)"]
-        Planner["Pick & Place Planner\n(9-Stage Deterministic FSM)"]
-        FSM --> Planner
-    end
+## 2. Mission
 
-    subgraph MotionControl["T2: Motion & Trajectory Generation"]
-        TrajGen["Min-Jerk Trajectory Generator\n(5th-order Polynomial Blend)"]
-        IK["Differential Inverse Kinematics\n(Damped Least-Squares SVD)"]
-        BaseServo["Diff-Drive Navigation & Alignment Tracker\n(Pure Pursuit & Dock Creep)"]
-        Planner --> TrajGen
-        TrajGen --> IK
-        Planner --> BaseServo
-    end
-
-    subgraph SafetyAndComms["T3: Safety & Industrial Modbus/TCP Layer"]
-        LidarSafety["64-Ray LiDAR Safety Observer\n(Speed Governor & Collision Shield)"]
-        ModbusClient["Modbus/TCP Client\n(Deterministic Register Read/Write)"]
-        LidarSafety -.->|Override / Halt| MotionControl
-        ModbusClient <-->|Station Handshake| FSM
-    end
-
-    subgraph HardwarePlant["T4: Physics Plant & Acceleration Engine"]
-        MuJoCo["MuJoCo Multi-Body Physics Plant\n(dt = 0.002s / 500 Hz RK4)"]
-        OSMesa["OSMesa Vectorized Offscreen Rasterizer\n(43.1 ms/frame)"]
-        NVENC["NVIDIA RTX 5050 NVENC ASIC\n(1080p @ 30 fps Broadcast Stream)"]
-        BaseServo --> MuJoCo
-        IK --> MuJoCo
-        MuJoCo --> OSMesa
-        OSMesa --> NVENC
-    end
-```
-
-### 2.2 Graphical Architecture Vector Diagram
-
-![System Architecture](diagrams/system_architecture.svg)
-*Source Draw.io XML: [system_architecture.drawio](diagrams/system_architecture.drawio)*
-
----
-
-## 3. Operational State Machine
-
-The top-level operational flow coordinates navigation between stations and the kit assembly cycles:
+`Mission` in `mission.py` is the state machine. There is no `cell_logic.py`.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> CellInit: Initialize Sensors & Modbus Handshake
-    CellInit --> NavStation1: Start Mission
-    NavStation1 --> WorkStation1: Base Arrived at S1 (1.60, 0.45)
-    
-    state WorkStation1 {
-        [*] --> S1_AssembleKit
-        S1_AssembleKit --> S1_VerifyAccept: Drop Ring & Settle
-        S1_VerifyAccept --> S1_AssembleKit: Next Kit (1..5)
-        S1_VerifyAccept --> S1_Done: kits_accepted == 5
-    }
-
-    WorkStation1 --> NavStation2: S1 Batch Complete
-    NavStation2 --> WorkStation2: Base Arrived at S2 (3.20, 0.45)
-
-    state WorkStation2 {
-        [*] --> S2_AssembleKit
-        S2_AssembleKit --> S2_VerifyAccept: Drop Ring & Settle
-        S2_VerifyAccept --> S2_AssembleKit: Next Kit (1..5)
-        S2_VerifyAccept --> S2_Done: kits_accepted == 5
-    }
-
-    WorkStation2 --> MissionComplete: S2 Batch Complete (Total: 10/10)
-    MissionComplete --> [*]
-
-    state SafetyInterlock {
-        SafetyStop: Human Intrusion Detected (d < 1.2m)
-        Resume: Path Clear (d > 1.5m for 500ms)
-    }
-
-    NavStation1 --> SafetyStop: Human enters safety zone
-    WorkStation1 --> SafetyStop: Human enters safety zone
-    NavStation2 --> SafetyStop: Human enters safety zone
-    WorkStation2 --> SafetyStop: Human enters safety zone
-    SafetyStop --> Resume: Safe clearance confirmed
+  [*] --> NavA
+  NavA --> WorkA: estimate within 22 mm and 0.030 rad\nbase speed <= 8 mm/s
+  WorkA --> WorkA: preposition, READY, hand cycle
+  WorkA --> NavB: 5 accepts, NOT_READY, arm stowed
+  NavB --> WorkB: same dock test at station B
+  WorkB --> Done: 5 accepts and arm stowed
+  WorkA --> Hold: human_stop, job active, person rays
+  WorkB --> Hold: human_stop, job active, person rays
+  Hold --> WorkA: 5 misses, 2.0 s, resume +0.2 s
+  Hold --> WorkB: 5 misses, 2.0 s, resume +0.2 s
 ```
 
-### 3.1 Graphical State Machine Vector Diagram
+Spec docks are A `(3.0, 2.0, −π/2)` and B `(3.0, 4.0, +π/2)`, from the start pose `(1.0, 3.0, 0)`. Navigation plans to a point 0.60 m before the dock, follows that path, aligns heading, then creeps. Station B's creep target is the spec dock plus 8 mm in y. The dock event stores the simulated base pose, which is what `systems-check` compares to the spec.
 
-![State Machine](diagrams/state_machine.svg)
-*Source Draw.io XML: [state_machine.drawio](diagrams/state_machine.drawio)*
+After the dock, the hand moves to station-local x = −0.08 m at z = 1.00 m. `READY` (command 1, kit id 0) is sent when that error is at most 0.08 m. `_maybe_line_ready` is empty. A job starts only when the queue is nonempty and `hand_err` < 0.05 m. Kits whose encoder-predicted bottle x is already past 0.12 m are abandoned and not claimed.
 
----
+The hand states on a successful kit are `hover`, `descend`, `close`, `lift`, `carry`, `lower`, `settle`, `open`, `retreat`. Thresholds are in `solution/LLD.md`. `ASSEMBLY_DONE` (command 3) is sent in `retreat`, or from `abort` when the ring is already on the flange (`abort-claim`). A plain abort releases the ring, records the kit in `trace["abandoned"]`, and does not send `ASSEMBLY_DONE`.
 
-## 4. Communication & Safety Architecture
+After five accepts at A the controller sends `NOT_READY`, stows, and plans to B. After five accepts at B it stows and sets `phase` to `done`. The plant refuses station B releases until A has five accepts, even if the robot has sent `READY`.
 
-### 4.1 Modbus/TCP Industrial Protocol
-Communication with the physical plant's Programmable Logic Controllers (PLCs) follows standard Modbus/TCP register mappings over port 502:
+## 3. Who accepts a kit
 
-| Register Address | Name | Type | Direction | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `30001` | Station Status | Holding Register | In (Read) | Bitmask: Station ready, belt active, part present |
-| `30002` | Kit Accepted Count | Holding Register | In (Read) | Accumulated accepted kit count (0–5 per station) |
-| `40001` | Watchdog Heartbeat | Holding Register | Out (Write) | Incrementing counter verifying robot controller alive |
-| `40002` | Robot Stage Status | Holding Register | Out (Write) | Current assembly phase (0=Nav, 1=Pick, 2=Track, 3=Seat) |
-| `40003` | Emergency Stop ACK | Holding Register | Out (Write) | Safety supervisor confirmation of active halt |
+`ASSEMBLY_DONE` sets `kit.done` on the line controller. The accepted count increments only inside `LineController.inspect`, when `done` is true and `inspection_passes` holds. That measurement is computed in `Plant._measurement` from ring and bottle geometry and contacts. The robot does not write registers 14 or 24.
 
-### 4.2 LiDAR Safety & Dynamic Speed Governor
-- **Sensor Setup**: 64-ray radial planar LiDAR array centered on the mobile base at $z = 0.25\text{ m}$.
-- **Warning Zone ($d < 1.8\text{ m}$)**: Linear velocity scaled down to 40% using smooth exponential decay.
-- **Stop Zone ($d < 1.2\text{ m}$)**: Actuator command immediately forced to zero; mechanical brakes clamped; trajectory interpolator frozen in place.
-- **Hysteresis Clearing**: Resumes motion only when the detected human boundary exceeds $1.5\text{ m}$ continuously for $\ge 500\text{ ms}$, ensuring zero jerk spikes or oscillating stops.
+`seat_verified` is the plant event that ends the cycle clock: a continuous 0.5 s hold of in-tolerance, settled, released geometry. Relative speed uses a 50 ms window.
+
+## 4. Modbus
+
+The map is the starter contract. Addresses are zero-based. Polling is every 25 steps (100 ms) during `work`. The client reads the latest-arrival register (11 or 21) and the accepted count (14 or 24) and keeps its own kit-id set. There is no watchdog register, no heartbeat write, and no backoff schedule.
+
+| Address | Meaning | Robot |
+|---|---|---|
+| 0 | Schema version 1 | Read |
+| 1 | Last applied sequence | Read |
+| 2 | Status: 1 applied, 2 duplicate | Read |
+| 3 | Kit arrivals | Read |
+| 10 / 20 | A / B ready | Read |
+| 11 / 21 | Latest A / B kit id | Read |
+| 12 / 22 | Latest inspected kit | Read |
+| 13 / 23 | Last inspection result | Read |
+| 14 / 24 | Accepted count | Read |
+| 15 / 25 | Rejected count | Read |
+| 16 / 26 | Nominal belt speed, 30 mm/s | Read |
+| 100–103 | sequence, station, kit id, command | FC16 write |
+
+Commands the controller sends: 1 `READY`, 2 `NOT_READY`, 3 `ASSEMBLY_DONE`. It does not send command 4. The sequence number is `acked + 1` and `acked` advances only after a response. The normal path is one `PLCClient.command` call. The socket timeout in the starter client is 2 s.
+
+`plc_retry` drops the acknowledgement of the first `ASSEMBLY_DONE` only. `RobotPLC._drop_then_retry` writes the FC16 frame on a raw socket and closes before reading, polls register 1 until it equals the sequence (10 ms sleeps, 2 s deadline), then sends the same sequence and payload on a new client. It requires status 2. The committed PLC-retry log at t = 44.548 s has `accepted_before == accepted_after == 0` and `controller_applied_count` 1.
+
+Belt speed for tracking is the scenario parameter from `spec.py`, observed through `LinePerception.encoder` (speed × time × a ±0.2% scale). Register 16 stays the nominal 30 mm/s from the line controller.
+
+## 5. Human stop
+
+`_frozen` runs from `_work` and returns immediately unless the scenario is `human_stop`. Rays start after `Intruder` has been triggered, which happens when a job enters `lift`. A stop is entered only when those rays see the person and a job is active. The hold continues after that job is dropped, until resume.
+
+`person_visible` casts 64 rays at z = 0.6 m from the base origin. A geom whose name starts with `human` counts when the range is under 1.0 m, or when the hit lies in the aisle rectangle (A: x 2.2–3.8 m, y 1.45–2.75 m; B: x 2.2–3.8 m, y 3.25–4.55 m). The 1.0 m test is from the base origin, not from the edge of the 0.28 m hull.
+
+On the first hit the log gets `human_enter` and `stop_command` at the same `t`. If the ring is welded, the weld is dropped, the jaws open, and the kit is appended to `abandoned`. While frozen, the arm, finger, and base `qpos` from before `mj_step` are written back afterward, and arm and finger velocities are zeroed. Exit requires five consecutive misses and at least 2.0 s since entry. `resume` is logged 0.2 s after exit. The person mesh has contact disabled. Its path is scripted: 0.70 s in, hold `max(2.2, duration − 0.8)` s, 0.50 s out. The robot does not read that clock.
+
+The committed human-stop log has enter/stop at 35.928 s, exit at 38.500 s, and resume at 38.700 s.
+
+Navigation does not run this check.
+
+## 6. Sensing boundary
+
+| Phase | Input the controller uses |
+|---|---|
+| Transit | Base `qvel` integrated as a unicycle, with ±1% scale and Gaussian noise, corrected by an 8-ray scan match at 5 Hz |
+| Dock creep | Four wall ranges, accepted only within 12 cm of the estimate. Yaw is not corrected |
+| Pick | Encoder prediction plus a 5×5 downward ray ROI, clamped to ±5 mm |
+| Carry and place | Plant `Carrier.arrival_t` and `Carrier.speed` for the bottle. Ring pose from `data.xpos` / `data.xmat`. Trim and seat gates use that pose |
+| Weld | `Plant.closest_ring()` via `mj_geomDistance` |
+| Human | Named `human*` ray hits, as above |
+
+`--oracle-perception` makes `ring_point` return the ring body pose. Scored runs leave it off, and `cell-eval` rejects a trace that says otherwise. The carry and place reads in the table do not depend on that flag.
+
+## 7. Committed results
+
+See `README.md` and `docs/SOLUTION.md`. Nominal seeds 0 and 2 and the PLC-retry run finish in 223.50–223.80 s with 10 accepts. Nominal seed 1 finishes in 249.00 s with 10 accepts and two inspection rejects. Human stop finishes in 319.44 s with 10 accepts and seven rejects. Those figures are the committed logs.
+
+## 8. Limitations
+
+The controller was exercised in the committed logs at 33.16–33.40 mm/s. An independent re-run on Linux with the pinned MuJoCo 3.8.1 did not reproduce kit 201 of nominal seed 0 (12.036 s against a committed 11.980 s) and, at the edges of the 25–35 mm/s range, seed 16 accepted 6/10 and seed 102 accepted 8/10 before the 270 s cap. Details are in `docs/SOLUTION.md`. CI does not run a mission.
